@@ -1,0 +1,34 @@
+import os
+import unittest
+
+from lettuce import world
+from lettuce_webdriver.tests import html_pages
+
+def setUp():
+    file_path = 'file://%s' % os.path.join(html_pages, 'basic_page.html')
+    world.browser.get(file_path)
+
+class TestUtil(unittest.TestCase):
+    def test_find_by_id(self):
+        from lettuce_webdriver.util import find_field_by_id
+        assert find_field_by_id(world.browser, 'password', 'pass')
+
+    def test_find_by_name(self):
+        from lettuce_webdriver.util import find_field_by_name
+        assert find_field_by_name(world.browser, 'submit', 'submit')
+        assert find_field_by_name(world.browser, 'select', 'car_choice')
+        assert find_field_by_name(world.browser, 'textarea', 'bio')
+
+    def test_find_by_label(self):
+        from lettuce_webdriver.util import find_field_by_label
+        assert find_field_by_label(world.browser, 'text', 'Username:')
+    
+    def test_no_label(self):
+        from lettuce_webdriver.util import find_field_by_label
+        assert find_field_by_label(world.browser, 'text', 'NoSuchLabel') is False
+    
+    def test_find_field(self):
+        from lettuce_webdriver.util import find_field
+        assert find_field(world.browser, 'text', 'username')
+        assert find_field(world.browser, 'text', 'Username:')
+        assert find_field(world.browser, 'text', 'user')

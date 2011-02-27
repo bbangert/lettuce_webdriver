@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>A Basic Page</title>
+</head>
+<body id="index" class="home">
+    <div id="somediv">Hello there!</div>
+    <form action="" method="POST">
+        <label for="username">Username: </label>
+        <input type="text" name="user" id="username" />
+        <input type="password" id ="pass" />
+        
+        <textarea name="bio">
+            Enter your bio.
+        </textarea>
+        
+        <label for="male_radio">Male</label>
+        <input type="radio" name="sex" value="male" id="male_radio" />
+        <label for="female_radio">Female</label>
+        <input type="radio" name="sex" value="female" id ="female_radio" />
+
+        <label for="bike_checkbox">I have a bike</label>
+        <input type="checkbox" name="vehicle" value="Bike" id="bike_checkbox" />
+        <label for="car_checkbox">I have a car</label>        
+        <input type="checkbox" name="vehicle" value="Car" id="car_checkbox" />
+
+        <select name="car_choice">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+        <input type="submit" name="submit" value="Submit!" />
+    </form>
+    <a href="http://google.com/">Google</a>
+</body>
+</html>
