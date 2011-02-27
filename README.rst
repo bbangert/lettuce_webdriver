@@ -2,7 +2,7 @@
 Lettuce steps for Web Testing with Selenium 2
 =============================================
 
-:mod:`lettuce_webdriver` provides a set of steps for use with the `Cucumber
+``lettuce_webdriver``` provides a set of steps for use with the `Cucumber
 <http://cukes.info/>`_ BDD Python port `lettuce <http://lettuce.it/>`_ using
 the `selenium 2.0b2 Python package <http://pypi.python.org/pypi/selenium>`_.
 
@@ -20,7 +20,7 @@ Setting Up lettuce_webdriver
 
 In your lettuce ``terrain.py`` file, add an include statement for lettuce to
 learn about the additional step definitions provided by
-:mod:`lettuce_webdriver` and a setup that creates the selenium browser
+``lettuce_webdriver`` and a setup that creates the selenium browser
 desired::
     
     from lettuce import before, world
@@ -48,7 +48,7 @@ Included Matchers
 The following lettuce step matchers are included in this package and can be
 used with Given/When/Then/And as desired.
 
-.. code-block:: text
+::
 
     # urls
     I visit "http://google.com/"
