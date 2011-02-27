@@ -47,7 +47,9 @@ Included Matchers
 
 The following lettuce step matchers are included in this package and can be
 used with Given/When/Then/And as desired.
-    
+
+.. code-block:: text
+
     # urls
     I visit "http://google.com/"
     I go to "http://google.com/"
