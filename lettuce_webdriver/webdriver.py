@@ -148,3 +148,21 @@ def assert_single_selected(step, option_name, select_name):
 def assert_single_selected(step, option_name, select_name):
     option_box = find_option(world.browser, select_name, option_name)
     assert not option_box.is_selected()
+
+
+@step('I choose "(.*?)"')
+def choose_radio(step, value):
+    box = find_field(world.browser, 'radio', value)
+    box.select()
+
+
+@step('The "(.*?)" option should be chosen')
+def assert_radio_selected(step, value):
+    box = find_field(world.browser, 'radio', value)
+    assert box.is_selected()
+
+
+@step('The "(.*?)" option should not be chosen')
+def assert_radio_selected(step, value):
+    box = find_field(world.browser, 'radio', value)
+    assert not box.is_selected()

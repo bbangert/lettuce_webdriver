@@ -13,19 +13,21 @@ def element_id_by_label(browser, label):
 def field_xpath(field, attribute):
     if field in ['select', 'textarea', 'button', 'option']:
         return '//%s[@%s="%%s"]' % (field, attribute)
-    elif field == '':
-        return '//input[@%s="%%s"]' % attribute
     else:
         return '//input[@%s="%%s"][@type="%s"]' % (attribute, field)
 
 
 def find_button(browser, value):
-    return find_field_by_id(browser, '', value) or \
-        find_field_by_id(browser, 'button', value) or \
-        find_field_by_name(browser, '', value) or \
-        find_field_by_name(browser, 'button', value) or \
-        find_field_by_value(browser, '', value) or \
-        find_field_by_value(browser, 'button', value)
+    return find_field_with_value(browser, 'submit', value) or \
+        find_field_with_value(browser, 'reset', value) or \
+        find_field_with_value(browser, 'button', value) or \
+        find_field_with_value(browser, 'image', value)
+
+
+def find_field_with_value(browser, field, value):
+    return find_field_by_id(browser, field, value) or \
+        find_field_by_name(browser, field, value) or \
+        find_field_by_value(browser, field, value)
 
 
 def find_option(browser, select_name, option_name):

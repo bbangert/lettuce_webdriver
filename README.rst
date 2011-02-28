@@ -87,5 +87,10 @@ used with Given/When/Then/And as desired.
     The "Volvo" option from "Car Choices" should be selected
     The "Saab" option from "Car Choices" should not be selected
     
+    # radio buttons
+    I choose "Foobar"
+    The "Foobar" option should be chosen
+    The "Bar" option should not be chosen
+    
     # text entry fields (text, textarea, password)
     I fill in "Username" with "Smith"

@@ -105,6 +105,16 @@ Feature: Basic page formstuff
 """ % {'page': PAGES['basic_page']}
 
 
+FEATURE11 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        When I go to "%(page)s"
+        And I choose "Male"
+        Then The "Male" option should be chosen
+        And The "Female" option should not be chosen
+""" % {'page': PAGES['basic_page']}
+
+
 
 class TestUtil(unittest.TestCase):
     def setUp(self):
@@ -180,3 +190,10 @@ class TestUtil(unittest.TestCase):
         feature_result = f.run()
         scenario_result = feature_result.scenario_results[0]
         self.assertEquals(len(scenario_result.steps_passed), 5)
+
+    def test_feature11(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE11)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 4)
