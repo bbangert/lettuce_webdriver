@@ -50,6 +50,61 @@ Feature: Basic page linking
 """ % {'link_page': PAGES['link_page'],
        'link_dest_page': PAGES['link_dest']}
 
+FEATURE5 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        When I go to "%(page)s"
+        Then I should see a form that goes to "basic_page.html"
+        And The element with id of "somediv" contains "Hello"
+""" % {'page': PAGES['basic_page']}
+
+FEATURE6 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        Given I go to "%(page)s"
+        And I fill in "bio" with "everything awesome"
+        When I press "Submit!"
+        Then The browser's URL should contain "bio=everything"
+""" % {'page': PAGES['basic_page']}
+
+FEATURE7 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        Given I go to "%(page)s"
+        When I check "I have a bike"
+        Then The "I have a bike" checkbox should be checked
+        And The "I have a car" checkbox should not be checked
+""" % {'page': PAGES['basic_page']}
+
+FEATURE8 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        Given I go to "%(page)s"
+        And I check "I have a bike"
+        And The "I have a bike" checkbox should be checked
+        When I uncheck "I have a bike"
+        Then The "I have a bike" checkbox should not be checked
+""" % {'page': PAGES['basic_page']}
+
+FEATURE9 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        Given I go to "%(page)s"
+        When I select "Mercedes" from "car_choice"
+        Then The "Mercedes" option from "car_choice" should be selected
+""" % {'page': PAGES['basic_page']}
+
+FEATURE10 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        Given I go to "%(page)s"
+        And I select "Mercedes" from "car_choice"
+        And The "Mercedes" option from "car_choice" should be selected
+        When I select "Volvo" from "car_choice"
+        Then The "Mercedes" option from "car_choice" should not be selected
+""" % {'page': PAGES['basic_page']}
+
+
 
 class TestUtil(unittest.TestCase):
     def setUp(self):
@@ -83,3 +138,45 @@ class TestUtil(unittest.TestCase):
         feature_result = f.run()
         scenario_result = feature_result.scenario_results[0]
         self.assertEquals(len(scenario_result.steps_passed), 6)
+
+    def test_feature5(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE5)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 3)
+
+    def test_feature6(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE6)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 4)
+
+    def test_feature7(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE7)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 4)
+
+    def test_feature8(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE8)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 5)
+
+    def test_feature9(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE9)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 3)
+
+    def test_feature10(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE10)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 5)

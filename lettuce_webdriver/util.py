@@ -11,12 +11,34 @@ def element_id_by_label(browser, label):
 ## Field helper functions to locate select, textarea, and the other
 ## types of input fields (text, checkbox, radio)
 def field_xpath(field, attribute):
-    if field == 'select':
-        return '//select[@%s="%%s"]' % attribute
-    elif field == 'textarea':
-        return '//textarea[@%s="%%s"]' % attribute
+    if field in ['select', 'textarea', 'button', 'option']:
+        return '//%s[@%s="%%s"]' % (field, attribute)
+    elif field == '':
+        return '//input[@%s="%%s"]' % attribute
     else:
         return '//input[@%s="%%s"][@type="%s"]' % (attribute, field)
+
+
+def find_button(browser, value):
+    return find_field_by_id(browser, '', value) or \
+        find_field_by_id(browser, 'button', value) or \
+        find_field_by_name(browser, '', value) or \
+        find_field_by_name(browser, 'button', value) or \
+        find_field_by_value(browser, '', value) or \
+        find_field_by_value(browser, 'button', value)
+
+
+def find_option(browser, select_name, option_name):
+    # First, locate the select
+    select_box = find_field(browser, 'select', select_name)
+    assert select_box
+    
+    # Now locate the option
+    option_box = find_field(select_box, 'option', option_name)
+    if not option_box:
+        # Locate by contents
+        option_box = select_box.find_element_by_xpath('//option[contains(., "%s")]' % option_name)
+    return option_box
 
 
 def find_field(browser, field, value):
@@ -39,6 +61,12 @@ def find_field_by_id(browser, field, id):
 
 def find_field_by_name(browser, field, name):
     xpath = field_xpath(field, 'name')
+    elems = browser.find_elements_by_xpath(xpath % name)
+    return elems[0] if elems else False
+
+
+def find_field_by_value(browser, field, name):
+    xpath = field_xpath(field, 'value')
     elems = browser.find_elements_by_xpath(xpath % name)
     return elems[0] if elems else False
 

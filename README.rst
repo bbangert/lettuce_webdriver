@@ -2,7 +2,7 @@
 Lettuce steps for Web Testing with Selenium 2
 =============================================
 
-``lettuce_webdriver``` provides a set of steps for use with the `Cucumber
+``lettuce_webdriver`` provides a set of steps for use with the `Cucumber
 <http://cukes.info/>`_ BDD Python port `lettuce <http://lettuce.it/>`_ using
 the `selenium 2.0b2 Python package <http://pypi.python.org/pypi/selenium>`_.
 
@@ -59,12 +59,33 @@ used with Given/When/Then/And as desired.
     I should see a link with the url "http://foobar.com/"
     I should see a link to "Google" with the url "http://google.com/"
     I should see a link that contains the text "Foobar" and the url "http://foobar.com/"
-    
-    # browser
+
+    # general
     I should see "Page Content"
     I see "Page Content"
     I should not see "Foobar"
     I should be at "http://foobar.com/"
+    The element with id of "cs_PageModeContainer" contains "Read"
+
+    # browser
     The browser's URL should be "http://bar.com/"
     The browser's URL should contain "foo.com"
     The browser's URL should not contain "bar.com"
+    
+    # forms
+    I should see a form that goes to "http://bar.com/submit.html"
+    I press "Submit"
+    
+    # checkboxes
+    I check "I have a car"
+    I uncheck "I have a bus"
+    The "I have a car" checkbox should be checked
+    The "I have a bus" checkbox should not be checked
+    
+    # select
+    I select "Volvo" from "Car Choices"
+    The "Volvo" option from "Car Choices" should be selected
+    The "Saab" option from "Car Choices" should not be selected
+    
+    # text entry fields (text, textarea, password)
+    I fill in "Username" with "Smith"
