@@ -39,8 +39,15 @@ lettuce stories are written in the standard Cucumber style of `gherkin
     
     Scenario: Filling out the signup form
       Given I go to "http://foo.com/signup"
-        And I click "Continue"
-       Then I should see "Next Page"
+       When I fill in "Name" with "Foo Bar"
+        And I fill in "Email" with "nospam@gmail.com"
+        And I fill in "City" with "San Jose"
+        And I fill in "State" with "CA"
+        And I uncheck "Send me spam!"
+        And I select "Male" from "Gender"
+        And I press "Sign up"
+       Then I should see "Thank you for signing up!"
+
 
 Included Matchers
 -----------------
@@ -84,6 +91,11 @@ used with Given/When/Then/And as desired.
     
     # select
     I select "Volvo" from "Car Choices"
+    I select the following from "Car Choices":
+        """
+        Volvo
+        Saab
+        """
     The "Volvo" option from "Car Choices" should be selected
     The "Saab" option from "Car Choices" should not be selected
     
