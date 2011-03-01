@@ -50,6 +50,25 @@ def element_contains(step, element_id, value):
     return world.browser.find_element_by_xpath('//*[@id="%s"][contains(., "%s")]' %
         (element_id, value))
 
+
+@step('The element with id of "(.*?)" does not contain "(.*?)"')
+def element_contains(step, element_id, value):
+    elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
+    assert value not in elem.text
+
+
+@step('I should see an element with id of "(.*?)"')
+def should_see_id(step, element_id):
+    elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
+    assert elem.is_displayed()
+
+
+@step('I should not see an element with id of "(.*?)"')
+def should_see_id(step, element_id):
+    elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
+    assert not elem.is_displayed()
+
+
 @step('I should see "([^"]+)"')
 def should_see(step, text):
     assert text in world.browser.get_page_source()

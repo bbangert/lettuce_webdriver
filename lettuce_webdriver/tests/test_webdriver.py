@@ -56,6 +56,7 @@ Feature: Basic page formstuff
         When I go to "%(page)s"
         Then I should see a form that goes to "basic_page.html"
         And The element with id of "somediv" contains "Hello"
+        And The element with id of "somediv" does not contain "bye"
 """ % {'page': PAGES['basic_page']}
 
 FEATURE6 = """
@@ -122,6 +123,14 @@ Feature: Basic page formstuff
 """ % {'page': PAGES['basic_page']}
 
 
+FEATURE12 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        When I go to "%(page)s"
+        Then I should see an element with id of "bio_field"
+        And I should not see an element with id of "hidden_text"
+""" % {'page': PAGES['basic_page']}
+
 
 class TestUtil(unittest.TestCase):
     def setUp(self):
@@ -161,7 +170,7 @@ class TestUtil(unittest.TestCase):
         f = Feature.from_string(FEATURE5)
         feature_result = f.run()
         scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 3)
+        self.assertEquals(len(scenario_result.steps_passed), 4)
 
     def test_feature6(self):
         import lettuce_webdriver.webdriver
@@ -204,3 +213,10 @@ class TestUtil(unittest.TestCase):
         feature_result = f.run()
         scenario_result = feature_result.scenario_results[0]
         self.assertEquals(len(scenario_result.steps_passed), 4)
+
+    def test_feature12(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE12)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 3)
