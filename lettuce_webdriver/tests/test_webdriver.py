@@ -94,15 +94,22 @@ Feature: Basic page formstuff
         Then The "Mercedes" option from "car_choice" should be selected
 """ % {'page': PAGES['basic_page']}
 
-FEATURE10 = """
+
+FEATURE10 = '''
 Feature: Basic page formstuff
     Scenario: Everything fires up
         Given I go to "%(page)s"
-        And I select "Mercedes" from "car_choice"
-        And The "Mercedes" option from "car_choice" should be selected
-        When I select "Volvo" from "car_choice"
-        Then The "Mercedes" option from "car_choice" should not be selected
-""" % {'page': PAGES['basic_page']}
+        When I select the following from "Favorite Colors:":
+            """
+            Blue
+            Green
+            """
+        Then The following options from "Favorite Colors:" should be selected:
+            """
+            Blue
+            Green
+            """
+''' % {'page': PAGES['basic_page']}
 
 
 FEATURE11 = """
@@ -189,7 +196,7 @@ class TestUtil(unittest.TestCase):
         f = Feature.from_string(FEATURE10)
         feature_result = f.run()
         scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 5)
+        self.assertEquals(len(scenario_result.steps_passed), 3)
 
     def test_feature11(self):
         import lettuce_webdriver.webdriver

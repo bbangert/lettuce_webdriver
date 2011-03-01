@@ -138,16 +138,43 @@ def select_single_item(step, option_name, select_name):
     option_box.select()
 
 
+@step('I select the following from "(.*?)"')
+def select_multi_items(step, select_name):
+    # Ensure only the options selected are actually selected
+    option_names = step.multiline.split('\n')
+    select_box = find_field(world.browser, 'select', select_name)
+    option_elems = select_box.find_elements_by_xpath('./option')
+    for option in option_elems:
+        if option.get_attribute('id') in option_names or \
+           option.get_attribute('name') in option_names or \
+           option.get_attribute('value') in option_names or \
+           option.text in option_names:
+            option.select()
+        else:
+            if option.is_selected():
+                option.toggle()
+
+
 @step('The "(.*?)" option from "(.*?)" should be selected')
 def assert_single_selected(step, option_name, select_name):
     option_box = find_option(world.browser, select_name, option_name)
     assert option_box.is_selected()
 
 
-@step('The "(.*?)" option from "(.*?)" should not be selected')
-def assert_single_selected(step, option_name, select_name):
-    option_box = find_option(world.browser, select_name, option_name)
-    assert not option_box.is_selected()
+@step('The following options from "(.*?)" should be selected')
+def assert_multi_selected(step, select_name):
+    # Ensure its not selected unless its one of our options
+    option_names = step.multiline.split('\n')
+    select_box = find_field(world.browser, 'select', select_name)
+    option_elems = select_box.find_elements_by_xpath('./option')
+    for option in option_elems:
+        if option.get_attribute('id') in option_names or \
+           option.get_attribute('name') in option_names or \
+           option.get_attribute('value') in option_names or \
+           option.text in option_names:
+            assert option.is_selected()
+        else:
+            assert not option.is_selected()
 
 
 @step('I choose "(.*?)"')

@@ -97,7 +97,11 @@ used with Given/When/Then/And as desired.
         Saab
         """
     The "Volvo" option from "Car Choices" should be selected
-    The "Saab" option from "Car Choices" should not be selected
+    The following options from "Car Choices" should be selected:
+        """
+        Volvo
+        Saab
+        """
     
     # radio buttons
     I choose "Foobar"
