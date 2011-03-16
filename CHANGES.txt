@@ -1,3 +1,8 @@
+0.1.2
+-----
+
+-   Updated "press" step so it doesn't require 'When'
+
 0.1.1
 -----
 

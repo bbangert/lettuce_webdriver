@@ -120,7 +120,7 @@ def fill_in_textfield(step, field_name, value):
     text_field.send_keys(value)
 
 
-@step('When I press "(.*?)"')
+@step('I press "(.*?)"')
 def press_button(step, value):
     button = find_button(world.browser, value)
     button.click()
