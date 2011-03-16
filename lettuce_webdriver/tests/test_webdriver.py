@@ -64,6 +64,7 @@ Feature: Basic page formstuff
     Scenario: Everything fires up
         Given I go to "%(page)s"
         And I fill in "bio" with "everything awesome"
+        And I fill in "Password: " with "neat"
         When I press "Submit!"
         Then The browser's URL should contain "bio=everything"
 """ % {'page': PAGES['basic_page']}
@@ -177,7 +178,7 @@ class TestUtil(unittest.TestCase):
         f = Feature.from_string(FEATURE6)
         feature_result = f.run()
         scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 4)
+        self.assertEquals(len(scenario_result.steps_passed), 5)
 
     def test_feature7(self):
         import lettuce_webdriver.webdriver
