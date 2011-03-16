@@ -70,6 +70,7 @@ used with Given/When/Then/And as desired.
     # general
     I should see "Page Content"
     I see "Page Content"
+    I should see "Page Content" within 4 seconds
     I should not see "Foobar"
     I should be at "http://foobar.com/"
     I should see an element with id of "http://bar.com/"

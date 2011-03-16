@@ -129,6 +129,18 @@ Feature: Basic page formstuff
     Scenario: Everything fires up
         When I go to "%(page)s"
         Then I should see an element with id of "bio_field"
+        And I should see an element with id of "somediv" within 2 seconds
+        And I should not see an element with id of "hidden_text"
+        And I should see "Weeeee" within 1 second
+""" % {'page': PAGES['basic_page']}
+
+
+FEATURE13 = """
+Feature: Basic page formstuff
+    Scenario: Everything fires up
+        When I go to "%(page)s"
+        Then I should see "Hello there" within 1 second
+        And I should see an element with id of "oops_field" within 1 second
         And I should not see an element with id of "hidden_text"
 """ % {'page': PAGES['basic_page']}
 
@@ -220,4 +232,11 @@ class TestUtil(unittest.TestCase):
         f = Feature.from_string(FEATURE12)
         feature_result = f.run()
         scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 3)
+        self.assertEquals(len(scenario_result.steps_passed), 4)
+
+    def test_feature13(self):
+        import lettuce_webdriver.webdriver
+        f = Feature.from_string(FEATURE13)
+        feature_result = f.run()
+        scenario_result = feature_result.scenario_results[0]
+        self.assertEquals(len(scenario_result.steps_passed), 2)

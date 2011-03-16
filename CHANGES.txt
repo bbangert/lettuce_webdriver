@@ -1,3 +1,8 @@
+0.1.3
+-----
+
+-   Added 'I should see ".." within X seconds' step.
+
 0.1.2
 -----
 
