@@ -74,6 +74,7 @@ used with Given/When/Then/And as desired.
     I should not see "Foobar"
     I should be at "http://foobar.com/"
     I should see an element with id of "http://bar.com/"
+    I should see an element with id of "http://bar.com/" within 2 seconds
     I should not see an element with id of "http://bar.com/"
     The element with id of "cs_PageModeContainer" contains "Read"
     The element with id of "cs_BigDiv" does not contain "Write"
