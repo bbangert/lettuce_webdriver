@@ -1,7 +1,7 @@
 """Webdriver support for lettuce"""
 import time
 
-from nose.tools import assert_true
+from nose.tools import assert_true,assert_false
 
 from lettuce import step
 from lettuce import world
@@ -154,6 +154,7 @@ def fill_in_textfield(step, field_name, value):
     text_field = find_field(world.browser, 'text', field_name) or \
         find_field(world.browser, 'textarea', field_name) or \
         find_field(world.browser, 'password', field_name)
+    assert_false(text_field == False,'Can not find a field named "%s"' % field_name)
     text_field.clear()
     text_field.send_keys(value)
 
