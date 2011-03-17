@@ -1,3 +1,8 @@
+trunk
+-----
+
+-   Adding a guard to fail properly if the field is not found.
+
 0.1.3
 -----
 
