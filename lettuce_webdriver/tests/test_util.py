@@ -32,3 +32,10 @@ class TestUtil(unittest.TestCase):
         assert find_field(world.browser, 'text', 'username')
         assert find_field(world.browser, 'text', 'Username:')
         assert find_field(world.browser, 'text', 'user')
+
+    def test_find_button(self):
+        from lettuce_webdriver.util import find_button
+        assert find_button(world.browser, 'submit')
+        assert find_button(world.browser, 'Submit!')
+        assert find_button(world.browser, 'submit_tentative')
+        assert find_button(world.browser, 'Submit as tentative')
