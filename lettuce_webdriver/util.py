@@ -11,8 +11,13 @@ def element_id_by_label(browser, label):
 ## Field helper functions to locate select, textarea, and the other
 ## types of input fields (text, checkbox, radio)
 def field_xpath(field, attribute):
-    if field in ['select', 'textarea', 'button']:
+    if field in ['select', 'textarea']:
         return '//%s[@%s="%%s"]' % (field, attribute)
+    elif field == 'button':
+        if attribute == 'value':
+            return '//%s[contains(., "%%s")]' % (field, )
+        else:
+            return '//%s[@%s="%%s"]' % (field, attribute)
     elif field == 'option':
         return './/%s[@%s="%%s"]' % (field, attribute)
     else:
