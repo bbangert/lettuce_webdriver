@@ -1,4 +1,18 @@
 """Utility functions that combine steps to locate elements"""
+from nose.tools import assert_true as nose_assert_true
+from nose.tools import assert_false as nose_assert_false
+
+def assert_true(step, exp):
+    try:
+        nose_assert_true(exp)
+    except AssertionError:
+        raise AssertionError(unicode(step.sentence))
+
+def assert_false(step, exp, msg=None):
+    try:
+        nose_assert_false(exp, msg)
+    except AssertionError:
+        raise AssertionError(unicode(step.sentence))
 
 def element_id_by_label(browser, label):
     """Return the id of a label's for attribute"""
