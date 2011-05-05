@@ -2,17 +2,30 @@
 from nose.tools import assert_true as nose_assert_true
 from nose.tools import assert_false as nose_assert_false
 
+class AssertContextManager():
+    def __init__(self, step):
+        self.step = step
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, type, value, traceback):
+        step = self.step
+        if traceback:
+            if isinstance(value, AssertionError):
+                error = AssertionError(self.step.sentence)
+            else:
+                sentence = "%s, failed because: %s" % (step.sentence, value)
+                error = AssertionError(sentence)
+            raise error, None, traceback 
+
 def assert_true(step, exp):
-    try:
+    with AssertContextManager(step):
         nose_assert_true(exp)
-    except AssertionError:
-        raise AssertionError(unicode(step.sentence))
 
 def assert_false(step, exp, msg=None):
-    try:
+    with AssertContextManager(step):
         nose_assert_false(exp, msg)
-    except AssertionError:
-        raise AssertionError(unicode(step.sentence))
 
 def element_id_by_label(browser, label):
     """Return the id of a label's for attribute"""
