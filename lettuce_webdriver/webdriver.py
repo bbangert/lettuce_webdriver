@@ -26,10 +26,10 @@ def wait_for_elem(browser, xpath, timeout=15):
 def wait_for_content(browser, content, timeout=15):
     start = time.time()
     while time.time() - start < timeout:
-        if content in world.browser.get_page_source():
+        if content in world.browser.page_source:
             return
         time.sleep(0.2)
-    assert_true(step, content in world.browser.get_page_source())
+    assert_true(step, content in world.browser.page_source)
 
 
 ## URLS
@@ -111,17 +111,17 @@ def should_see_in_seconds(step, text, timeout):
 
 @step('I should see "([^"]+)"')
 def should_see(step, text):
-    assert_true(step, text in world.browser.get_page_source())
+    assert_true(step, text in world.browser.page_source)
 
 
 @step('I see "([^"]+)"')
 def see(step, text):
-    assert_true(step, text in world.browser.get_page_source())
+    assert_true(step, text in world.browser.page_source)
 
 
 @step('I should not see "([^"]+)"')
 def should_not_see(step, text):
-    assert_true(step, text not in world.browser.get_page_source())
+    assert_true(step, text not in world.browser.page_source)
 
 
 @step('I should be at "(.*?)"')
