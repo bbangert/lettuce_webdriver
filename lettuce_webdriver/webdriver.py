@@ -23,7 +23,7 @@ def wait_for_elem(browser, xpath, timeout=15):
     return elems
 
 
-def wait_for_content(browser, content, timeout=15):
+def wait_for_content(step, browser, content, timeout=15):
     start = time.time()
     while time.time() - start < timeout:
         if content in world.browser.page_source:
@@ -106,7 +106,7 @@ def should_not_see_id(step, element_id):
 
 @step('I should see "([^"]+)" within (\d+) seconds?')
 def should_see_in_seconds(step, text, timeout):
-    wait_for_content(world.browser, text, int(timeout))
+    wait_for_content(step, world.browser, text, int(timeout))
 
 
 @step('I should see "([^"]+)"')

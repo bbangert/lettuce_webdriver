@@ -2,6 +2,7 @@ trunk
 -----
 
 -   Adding a guard to fail properly if the field is not found.
+-   API change: wait_for_content now expects a step as the first parameter
 
 0.1.3
 -----
