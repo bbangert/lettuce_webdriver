@@ -115,3 +115,12 @@ used with Given/When/Then/And as desired.
     
     # text entry fields (text, textarea, password)
     I fill in "Username" with "Smith"
+
+Support
+=======
+
+lettuce_webdriver is considered feature-complete as the project owner (Ben
+Bangert) has no additional functionality or development beyond bug fixes
+planned. Bugs can be filed on github, should be accompanied by a test case to
+retain current code coverage, and should be in a Pull request when ready to be
+accepted into the lettuce_webdriver code-base.
