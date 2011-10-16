@@ -2,6 +2,7 @@ import os
 import unittest
 
 from lettuce import world
+from lettuce.core import Step
 from lettuce_webdriver.tests import html_pages
 
 def setUp():
@@ -32,3 +33,16 @@ class TestUtil(unittest.TestCase):
         assert find_field(world.browser, 'text', 'username')
         assert find_field(world.browser, 'text', 'Username:')
         assert find_field(world.browser, 'text', 'user')
+
+    def test_find_button(self):
+        from lettuce_webdriver.util import find_button
+        assert find_button(world.browser, 'submit')
+        assert find_button(world.browser, 'Submit!')
+        assert find_button(world.browser, 'submit_tentative')
+        assert find_button(world.browser, 'Submit as tentative')
+    
+    def test_wait_for_content(self):
+        from lettuce_webdriver.webdriver import wait_for_content
+        step = Step("foobar", [])
+        self.assertRaises(AssertionError, wait_for_content, step, world.browser, 'text not on the page', timeout=0)
+    

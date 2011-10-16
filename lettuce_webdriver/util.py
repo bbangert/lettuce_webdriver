@@ -1,4 +1,31 @@
 """Utility functions that combine steps to locate elements"""
+from nose.tools import assert_true as nose_assert_true
+from nose.tools import assert_false as nose_assert_false
+
+class AssertContextManager():
+    def __init__(self, step):
+        self.step = step
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, type, value, traceback):
+        step = self.step
+        if traceback:
+            if isinstance(value, AssertionError):
+                error = AssertionError(self.step.sentence)
+            else:
+                sentence = "%s, failed because: %s" % (step.sentence, value)
+                error = AssertionError(sentence)
+            raise error, None, traceback 
+
+def assert_true(step, exp):
+    with AssertContextManager(step):
+        nose_assert_true(exp)
+
+def assert_false(step, exp, msg=None):
+    with AssertContextManager(step):
+        nose_assert_false(exp, msg)
 
 def element_id_by_label(browser, label):
     """Return the id of a label's for attribute"""
@@ -11,8 +38,13 @@ def element_id_by_label(browser, label):
 ## Field helper functions to locate select, textarea, and the other
 ## types of input fields (text, checkbox, radio)
 def field_xpath(field, attribute):
-    if field in ['select', 'textarea', 'button']:
+    if field in ['select', 'textarea']:
         return '//%s[@%s="%%s"]' % (field, attribute)
+    elif field == 'button':
+        if attribute == 'value':
+            return '//%s[contains(., "%%s")]' % (field, )
+        else:
+            return '//%s[@%s="%%s"]' % (field, attribute)
     elif field == 'option':
         return './/%s[@%s="%%s"]' % (field, attribute)
     else:
