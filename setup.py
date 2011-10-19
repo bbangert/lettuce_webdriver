@@ -27,6 +27,6 @@ setup(name='lettuce_webdriver',
       include_package_data=True,
       zip_safe=False,
       tests_require = ['lettuce', 'selenium'],
-      install_requires=['lettuce','selenium>=2.0b2'],
+      install_requires=['lettuce','selenium>=2.8.1'],
       test_suite="lettuce_webdriver",
       )

@@ -4,7 +4,7 @@ Lettuce steps for Web Testing with Selenium 2
 
 ``lettuce_webdriver`` provides a set of steps for use with the `Cucumber
 <http://cukes.info/>`_ BDD Python port `lettuce <http://lettuce.it/>`_ using
-the `selenium 2.0b2 Python package <http://pypi.python.org/pypi/selenium>`_.
+the `selenium 2.8 or higher Python package <http://pypi.python.org/pypi/selenium>`_.
 
 The included matchers and syntax is inspired heavily by `cucumber_watir
 <https://github.com/napcs/cucumber_watir>`_.
@@ -13,7 +13,7 @@ Requirements
 ============
 
 * `lettuce <http://lettuce.it/>`_
-* `selenium 2.0b2 <http://pypi.python.org/pypi/selenium>`_
+* `selenium 2.8 or higher <http://pypi.python.org/pypi/selenium>`_
 
 Setting Up lettuce_webdriver
 ============================
