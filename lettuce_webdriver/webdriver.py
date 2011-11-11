@@ -67,7 +67,7 @@ def should_see_link_text(step, link_text, link_url):
 
 @step('I should see a link that contains the text "(.*?)" and the url "(.*?)"$')
 def should_include_link_text(step, link_text, link_url):
-    return world.browser.find_element_by_xpath('//a[@href="%s"][contains(., %s)]' % 
+    return world.browser.find_element_by_xpath('//a[@href="%s"][contains(., %s)]' %
         (link_url, link_text))
 
 
@@ -200,7 +200,7 @@ def assert_not_checked_checkbox(step, value):
 def select_single_item(step, option_name, select_name):
     with AssertContextManager(step):
         option_box = find_option(world.browser, select_name, option_name)
-        option_box.select()
+        option_box.click()
 
 
 @step('I select the following from "(.*?)"$')
