@@ -173,7 +173,7 @@ def press_button(step, value):
 def check_checkbox(step, value):
     with AssertContextManager(step):
         check_box = find_field(world.browser, 'checkbox', value)
-        check_box.select()
+        check_box.click()
 
 
 @step('I uncheck "(.*?)"$')
