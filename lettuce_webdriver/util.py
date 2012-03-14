@@ -39,16 +39,16 @@ def element_id_by_label(browser, label):
 ## types of input fields (text, checkbox, radio)
 def field_xpath(field, attribute):
     if field in ['select', 'textarea']:
-        return '//%s[@%s="%%s"]' % (field, attribute)
+        return './/%s[@%s="%%s"]' % (field, attribute)
     elif field == 'button':
         if attribute == 'value':
-            return '//%s[contains(., "%%s")]' % (field, )
+            return './/%s[contains(., "%%s")]' % (field, )
         else:
-            return '//%s[@%s="%%s"]' % (field, attribute)
+            return './/%s[@%s="%%s"]' % (field, attribute)
     elif field == 'option':
         return './/%s[@%s="%%s"]' % (field, attribute)
     else:
-        return '//input[@%s="%%s"][@type="%s"]' % (attribute, field)
+        return './/input[@%s="%%s"][@type="%s"]' % (attribute, field)
 
 
 def find_button(browser, value):
