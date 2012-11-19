@@ -1,3 +1,8 @@
+0.2.1
+-----
+
+-   Fix the guard from 0.2, incompatible with recent selenium versions.
+
 0.2
 ---
 
