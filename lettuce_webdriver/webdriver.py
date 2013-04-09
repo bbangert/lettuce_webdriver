@@ -12,6 +12,15 @@ from lettuce_webdriver.util import find_field
 from lettuce_webdriver.util import find_option
 
 
+def contains_content(browser, content):
+    for elem in browser.find_elements_by_xpath('//*[text()]'):
+        # hypothetically it should be possible to make this request using
+        # a contains() predicate, but that doesn't seem to behave properly
+        if elem.is_displayed() and content in elem.text:
+            return True
+
+    return False
+
 def wait_for_elem(browser, xpath, timeout=15):
     start = time.time()
     elems = []
@@ -26,10 +35,10 @@ def wait_for_elem(browser, xpath, timeout=15):
 def wait_for_content(step, browser, content, timeout=15):
     start = time.time()
     while time.time() - start < timeout:
-        if content in world.browser.page_source:
+        if contains_content(world.browser, content):
             return
         time.sleep(0.2)
-    assert_true(step, content in world.browser.page_source)
+    assert_true(step, contains_content(world.browser, content))
 
 
 ## URLS
@@ -111,17 +120,17 @@ def should_see_in_seconds(step, text, timeout):
 
 @step('I should see "([^"]+)"$')
 def should_see(step, text):
-    assert_true(step, text in world.browser.page_source)
+    assert_true(step, contains_content(world.browser, text))
 
 
 @step('I see "([^"]+)"$')
 def see(step, text):
-    assert_true(step, text in world.browser.page_source)
+    assert_true(step, contains_content(world.browser, text))
 
 
 @step('I should not see "([^"]+)"$')
 def should_not_see(step, text):
-    assert_true(step, text not in world.browser.page_source)
+    assert_true(step, not contains_content(world.browser, text))
 
 
 @step('I should be at "(.*?)"$')
