@@ -11,6 +11,9 @@ from lettuce_webdriver.util import find_button
 from lettuce_webdriver.util import find_field
 from lettuce_webdriver.util import find_option
 
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
+
 
 def contains_content(browser, content):
     for elem in browser.find_elements_by_xpath('//*[text()]'):
@@ -219,17 +222,15 @@ def select_multi_items(step, select_name):
         # Ensure only the options selected are actually selected
         option_names = step.multiline.split('\n')
         select_box = find_field(world.browser, 'select', select_name)
-        option_elems = select_box.find_elements_by_xpath('./option')
-        for option in option_elems:
-            if option.get_attribute('id') in option_names or \
-               option.get_attribute('name') in option_names or \
-               option.get_attribute('value') in option_names or \
-               option.text in option_names:
-                option.select()
-            else:
-                if option.is_selected():
-                    option.toggle()
 
+        select = Select(select_box)
+        select.deselect_all()
+
+        for option in option_names:
+            try:
+                select.select_by_value(option)
+            except NoSuchElementException:
+                select.select_by_visible_text(option)
 
 @step('The "(.*?)" option from "(.*?)" should be selected$')
 def assert_single_selected(step, option_name, select_name):
