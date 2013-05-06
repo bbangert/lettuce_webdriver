@@ -112,8 +112,11 @@ def should_see_id(step, element_id):
 
 @step('I should not see an element with id of "(.*?)"$')
 def should_not_see_id(step, element_id):
-    elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
-    assert_true(step, not elem.is_displayed())
+    try:
+        elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
+        assert_true(step, not elem.is_displayed())
+    except NoSuchElementException:
+        pass
 
 
 @step('I should see "([^"]+)" within (\d+) seconds?$')
