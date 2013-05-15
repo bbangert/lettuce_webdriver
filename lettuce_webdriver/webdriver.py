@@ -12,15 +12,20 @@ from lettuce_webdriver.util import find_field
 from lettuce_webdriver.util import find_option
 
 from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import \
+    NoSuchElementException, \
+    StaleElementReferenceException
 
 
 def contains_content(browser, content):
     for elem in browser.find_elements_by_xpath('//*[text()]'):
         # hypothetically it should be possible to make this request using
         # a contains() predicate, but that doesn't seem to behave properly
-        if elem.is_displayed() and content in elem.text:
-            return True
+        try:
+            if elem.is_displayed() and content in elem.text:
+                return True
+        except StaleElementReferenceException:
+            pass
 
     return False
 
