@@ -267,7 +267,7 @@ def assert_multi_selected(step, select_name):
 def choose_radio(step, value):
     with AssertContextManager(step):
         box = find_field(world.browser, 'radio', value)
-        box.select()
+        box.click()
 
 
 @step('The "(.*?)" option should be chosen$')
