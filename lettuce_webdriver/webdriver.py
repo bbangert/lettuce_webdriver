@@ -12,15 +12,20 @@ from lettuce_webdriver.util import find_field
 from lettuce_webdriver.util import find_option
 
 from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import \
+    NoSuchElementException, \
+    StaleElementReferenceException
 
 
 def contains_content(browser, content):
     for elem in browser.find_elements_by_xpath('//*[text()]'):
         # hypothetically it should be possible to make this request using
         # a contains() predicate, but that doesn't seem to behave properly
-        if elem.is_displayed() and content in elem.text:
-            return True
+        try:
+            if elem.is_displayed() and content in elem.text:
+                return True
+        except StaleElementReferenceException:
+            pass
 
     return False
 
@@ -112,8 +117,11 @@ def should_see_id(step, element_id):
 
 @step('I should not see an element with id of "(.*?)"$')
 def should_not_see_id(step, element_id):
-    elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
-    assert_true(step, not elem.is_displayed())
+    try:
+        elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
+        assert_true(step, not elem.is_displayed())
+    except NoSuchElementException:
+        pass
 
 
 @step('I should see "([^"]+)" within (\d+) seconds?$')
@@ -272,7 +280,7 @@ def assert_multi_selected(step, select_name):
 def choose_radio(step, value):
     with AssertContextManager(step):
         box = find_field(world.browser, 'radio', value)
-        box.select()
+        box.click()
 
 
 @step('The "(.*?)" option should be chosen$')
