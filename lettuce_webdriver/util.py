@@ -73,7 +73,7 @@ def find_option(browser, select_name, option_name):
     option_box = find_field(select_box, 'option', option_name)
     if not option_box:
         # Locate by contents
-        option_box = select_box.find_element_by_xpath('./option[contains(., "%s")]' % option_name)
+        option_box = select_box.find_element_by_xpath('.//option[contains(., "%s")]' % option_name)
     return option_box
 
 
