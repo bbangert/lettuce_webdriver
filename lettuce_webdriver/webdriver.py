@@ -235,7 +235,7 @@ def select_single_item(step, option_name, select_name):
         option_box.click()
 
 
-@step('I select the following from "(.*?)"$')
+@step('I select the following from "([^"]*?)":?$')
 def select_multi_items(step, select_name):
     with AssertContextManager(step):
         # Ensure only the options selected are actually selected
@@ -257,7 +257,7 @@ def assert_single_selected(step, option_name, select_name):
     assert_true(step, option_box.is_selected())
 
 
-@step('The following options from "(.*?)" should be selected$')
+@step('The following options from "([^"]*?)" should be selected:?$')
 def assert_multi_selected(step, select_name):
     with AssertContextManager(step):
         # Ensure its not selected unless its one of our options
