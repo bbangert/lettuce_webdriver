@@ -18,9 +18,7 @@ from selenium.common.exceptions import \
 
 
 def contains_content(browser, content):
-    for elem in browser.find_elements_by_xpath('//*[text()]'):
-        # hypothetically it should be possible to make this request using
-        # a contains() predicate, but that doesn't seem to behave properly
+    for elem in browser.find_elements_by_xpath("//*[contains(text(), '%s')]" % content):
         try:
             if elem.is_displayed() and content in elem.text:
                 return True
