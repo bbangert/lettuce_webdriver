@@ -18,9 +18,7 @@ from selenium.common.exceptions import \
 
 
 def contains_content(browser, content):
-    for elem in browser.find_elements_by_xpath('//*[text()]'):
-        # hypothetically it should be possible to make this request using
-        # a contains() predicate, but that doesn't seem to behave properly
+    for elem in browser.find_elements_by_xpath("//*[contains(text(), '%s')]" % content):
         try:
             if elem.is_displayed() and content in elem.text:
                 return True
@@ -237,7 +235,7 @@ def select_single_item(step, option_name, select_name):
         option_box.click()
 
 
-@step('I select the following from "(.*?)"$')
+@step('I select the following from "([^"]*?)":?$')
 def select_multi_items(step, select_name):
     with AssertContextManager(step):
         # Ensure only the options selected are actually selected
@@ -259,7 +257,7 @@ def assert_single_selected(step, option_name, select_name):
     assert_true(step, option_box.is_selected())
 
 
-@step('The following options from "(.*?)" should be selected$')
+@step('The following options from "([^"]*?)" should be selected:?$')
 def assert_multi_selected(step, select_name):
     with AssertContextManager(step):
         # Ensure its not selected unless its one of our options
