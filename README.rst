@@ -119,8 +119,6 @@ used with Given/When/Then/And as desired.
 Support
 =======
 
-lettuce_webdriver is considered feature-complete as the project owner (Ben
-Bangert) has no additional functionality or development beyond bug fixes
-planned. Bugs can be filed on github, should be accompanied by a test case to
-retain current code coverage, and should be in a Pull request when ready to be
-accepted into the lettuce_webdriver code-base.
+lettuce_webdriver is maintained by Nick Pilon (@npilon on github and
+npilon@lexmachina.com). Bug fixes and feature patches may be submitted using
+github pull requests, and bug reports or feature requests as github issues.
