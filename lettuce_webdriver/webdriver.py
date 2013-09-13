@@ -19,7 +19,10 @@ from selenium.common.exceptions import \
 
 def contains_content(browser, content):
     for elem in browser.find_elements_by_xpath(
-        '//*[contains(normalize-space(text()), "%s")]' % content):
+        '//*[contains(normalize-space(.),"{content}") ' \
+        'and not(./*[contains(normalize-space(.),"{content}")])]' \
+        .format(content=content)):
+
         try:
             if elem.is_displayed():
                 return True
