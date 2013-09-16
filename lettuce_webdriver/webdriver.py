@@ -18,6 +18,10 @@ from selenium.common.exceptions import \
 
 
 def contains_content(browser, content):
+    # Search for an element that contains the whole of the text we're looking
+    #  for in it or its subelements, but whose children do NOT contain that
+    #  text - otherwise matches <body> or <html> or other similarly useless
+    #  things.
     for elem in browser.find_elements_by_xpath(
         '//*[contains(normalize-space(.),"{content}") ' \
         'and not(./*[contains(normalize-space(.),"{content}")])]' \
