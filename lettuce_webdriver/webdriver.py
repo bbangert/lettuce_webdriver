@@ -18,9 +18,13 @@ from selenium.common.exceptions import \
 
 
 def contains_content(browser, content):
-    for elem in browser.find_elements_by_xpath("//*[contains(text(), '%s')]" % content):
+    for elem in browser.find_elements_by_xpath(
+        '//*[contains(normalize-space(.),"{content}") ' \
+        'and not(./*[contains(normalize-space(.),"{content}")])]' \
+        .format(content=content)):
+
         try:
-            if elem.is_displayed() and content in elem.text:
+            if elem.is_displayed():
                 return True
         except StaleElementReferenceException:
             pass
