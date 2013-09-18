@@ -12,12 +12,20 @@ for filename in os.listdir(html_pages):
     PAGES[name] = 'file://%s' % os.path.join(html_pages, filename)
 
 
-FEATURES = ["""
-Feature: Basic page formstuff
-    Scenario: Everything fires up
-        When I go to "%(page)s"
-        Then There should be an element matching $("textarea[name='bio']") within 1 second
-""" % {'page': PAGES['basic_page']},
+FEATURES = [
+    """
+    Feature: Wait and match CSS
+        Scenario: Everything fires up
+            When I go to "%(page)s"
+            Then There should be an element matching $("textarea[name='bio']") within 1 second
+    """ % {'page': PAGES['basic_page']},
+
+    """
+    Feature: CSS-based formstuff
+        Scenario: Everything fires up
+            When I go to "%(page)s"
+            Then I fill in $("input[name='user']") with "A test string"
+    """ % {'page': PAGES['basic_page']},    
 ]
 
 class TestUtil(unittest.TestCase):

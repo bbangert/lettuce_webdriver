@@ -19,10 +19,20 @@ def wait_for_elem(browser, sel, timeout=15):
         time.sleep(0.2)
     return elems
 
-@step(r'There should be an element matching \$\("(.*?)"\) within (\d+) seconds?')
+@step(r'There should be an element matching \$\("(.*?)"\) within (\d+) seconds?$')
 def wait_for_element_by_selector(step, selector, seconds):
-    log.error(selector)
     elems = wait_for_elem(world.browser, selector, seconds)
     assert_true(step, elems)
 
-__all__ = ['wait_for_element_by_selector']
+
+@step(r'I fill in \$\("(.*?)"\) with "(.*?)"$')
+def fill_in_by_selector(step, selector, value):
+    elem = world.browser.find_element_by_css_selector(selector)
+    elem.clear()
+    elem.send_keys(value)
+
+
+__all__ = [
+    'wait_for_element_by_selector',
+    'fill_in_by_selector',
+]
