@@ -32,7 +32,15 @@ def fill_in_by_selector(step, selector, value):
     elem.send_keys(value)
 
 
+@step(r'I check \$\("(.*?)"\)$')
+def check_by_selector(step, selector):
+    elem = world.browser.find_element_by_css_selector(selector)
+    if not elem.is_selected():
+        elem.click()
+
+
 __all__ = [
     'wait_for_element_by_selector',
     'fill_in_by_selector',
+    'check_by_selector',
 ]

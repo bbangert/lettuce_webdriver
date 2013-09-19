@@ -25,6 +25,7 @@ FEATURES = [
         Scenario: Everything fires up
             When I go to "%(page)s"
             Then I fill in $("input[name='user']") with "A test string"
+            And I check $("input[value='Bike']")
     """ % {'page': PAGES['basic_page']},    
 ]
 
