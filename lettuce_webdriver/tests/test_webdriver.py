@@ -55,9 +55,9 @@ class TestUtil(unittest.TestCase):
         world.browser.get('')
 
     @feature(passed=5)
-    def test_feature1(self):
+    def test_I_should_see(self):
         """
-Feature: Basic page loads
+Feature: I should see, I should not see
     Scenario: Everything fires up
         When I visit "{page}"
         Then I should see "Hello there!"
@@ -69,9 +69,9 @@ Feature: Basic page loads
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=3)
-    def test_feature2(self):
+    def test_I_see_a_link(self):
         """
-Feature: Basic page loads
+Feature: I should see a link
     Scenario: Everything fires up
         When I go to "{page}"
         Then  I should see a link to "Google" with the url "http://google.com/"
@@ -81,9 +81,9 @@ Feature: Basic page loads
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=3)
-    def test_feature3(self):
+    def test_see_a_link_containing(self):
         """
-Feature: Basic page loads
+Feature: I should see a link containing
     Scenario: Everything fires up
         When I go to "{page}"
         Then The browser's URL should contain "file://"
@@ -93,7 +93,7 @@ Feature: Basic page loads
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=6)
-    def test_feature4(self):
+    def test_basic_page_linking(self):
         """
 Feature: Basic page linking
     Scenario: Follow links
@@ -111,22 +111,22 @@ Feature: Basic page linking
         }
 
     @feature(passed=4)
-    def test_feature5(self):
+    def test_I_see_a_form(self):
         """
-Feature: Basic page formstuff
+Feature: I should see a form
     Scenario: Everything fires up
         When I go to "{page}"
         Then I should see a form that goes to "basic_page.html"
-        And The element with id of "somediv" contains "Hello"
-        And The element with id of "somediv" does not contain "bye"
+        And the element with id of "somediv" contains "Hello"
+        And the element with id of "somediv" does not contain "bye"
         """
 
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=5)
-    def test_feature6(self):
+    def test_I_fill_in_a_form(self):
         """
-Feature: Basic page formstuff
+Feature: I fill in a form
     Scenario: Everything fires up
         Given I go to "{page}"
         And I fill in "bio" with "everything awesome"
@@ -138,9 +138,9 @@ Feature: Basic page formstuff
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=4)
-    def test_feature7(self):
+    def test_checkboxes_checked(self):
         """
-Feature: Basic page formstuff
+Feature: Checkboxes checked
     Scenario: Everything fires up
         Given I go to "{page}"
         When I check "I have a bike"
@@ -151,9 +151,9 @@ Feature: Basic page formstuff
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=5)
-    def test_feature8(self):
+    def test_checkboxes_unchecked(self):
         """
-Feature: Basic page formstuff
+Feature: Checkboxes unchecked
     Scenario: Everything fires up
         Given I go to "{page}"
         And I check "I have a bike"
@@ -165,9 +165,9 @@ Feature: Basic page formstuff
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=3)
-    def test_feature9(self):
+    def test_combo_boxes(self):
         """
-Feature: Basic page formstuff
+Feature: Combo boxes
     Scenario: Everything fires up
         Given I go to "{page}"
         When I select "Mercedes" from "car_choice"
@@ -177,9 +177,9 @@ Feature: Basic page formstuff
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=3)
-    def test_feature10(self):
+    def test_multi_combo_boxes(self):
         '''
-Feature: Basic page formstuff
+Feature: Multi-combo-boxes
     Scenario: Everything fires up
         Given I go to "{page}"
         When I select the following from "Favorite Colors:":
@@ -197,9 +197,9 @@ Feature: Basic page formstuff
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=4)
-    def test_feature11(self):
+    def test_radio_buttons(self):
         """
-Feature: Basic page formstuff
+Feature: Radio buttons
     Scenario: Everything fires up
         When I go to "{page}"
         And I choose "Male"
@@ -210,9 +210,9 @@ Feature: Basic page formstuff
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=4)
-    def test_feature12(self):
+    def test_hidden_text(self):
         """
-Feature: Basic page formstuff
+Feature: Hidden text
     Scenario: Everything fires up
         When I go to "{page}"
         Then I should see an element with id of "bio_field"
@@ -224,9 +224,9 @@ Feature: Basic page formstuff
         return dict(page=PAGES['basic_page'])
 
     @feature(passed=2)
-    def test_feature13(self):
+    def test_hidden_text_2(self):
         """
-Feature: Basic page formstuff
+Feature: Hidden text 2
     Scenario: Everything fires up
         When I go to "{page}"
         Then I should see "Hello there" within 1 second
