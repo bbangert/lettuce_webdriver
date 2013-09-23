@@ -13,9 +13,9 @@ from lettuce_webdriver.util import (assert_true,
                                     site_url)
 
 from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import \
-    NoSuchElementException, \
-    StaleElementReferenceException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException)
 
 
 def contains_content(browser, content):
@@ -35,6 +35,7 @@ def contains_content(browser, content):
             pass
 
     return False
+
 
 def wait_for_elem(browser, xpath, timeout=15):
     start = time.time()
@@ -268,6 +269,7 @@ def select_multi_items(step, select_name):
             except NoSuchElementException:
                 select.select_by_visible_text(option)
 
+
 @step('The "(.*?)" option from "(.*?)" should be selected$')
 def assert_single_selected(step, option_name, select_name):
     option_box = find_option(world.browser, select_name, option_name)
@@ -302,6 +304,7 @@ def choose_radio(step, value):
 def assert_radio_selected(step, value):
     box = find_field(world.browser, 'radio', value)
     assert_true(step, box.is_selected())
+
 
 @step('The "(.*?)" option should not be chosen$')
 def assert_radio_not_selected(step, value):
