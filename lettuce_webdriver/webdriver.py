@@ -10,7 +10,8 @@ from lettuce_webdriver.util import (assert_true,
                                     find_button,
                                     find_field,
                                     find_option,
-                                    site_url)
+                                    site_url,
+                                    option_in_select)
 
 from selenium.webdriver.support.ui import Select, Alert
 from selenium.common.exceptions import (
@@ -332,6 +333,16 @@ def assert_multi_selected(step, select_name):
                 assert_true(step, option.is_selected())
             else:
                 assert_true(step, not option.is_selected())
+
+
+@step(r'I should see option "([^"]*)" in selector "([^"]*)"')
+def select_contains(step, option, id_):
+    assert_true(step, option_in_select(world.browser, id_, option) is not None)
+
+
+@step(r'I should not see option "([^"]*)" in selector "([^"]*)"')
+def select_does_not_contain(step, option, id_):
+    assert_true(step, option_in_select(world.browser, id_, option) is None)
 
 
 ## Radios

@@ -4,6 +4,7 @@ import socket
 import urlparse
 
 from lettuce.django import server
+from selenium.common.exceptions import NoSuchElementException
 
 from nose.tools import assert_true as nose_assert_true
 from nose.tools import assert_false as nose_assert_false
@@ -146,3 +147,24 @@ def site_url(url):
         base_url += ':%d' % server.port
 
     return urlparse.urljoin(base_url, url)
+
+
+def option_in_select(browser, identifier, option):
+    """
+    Returns the Element specified by @option or None
+
+    Looks at the real <select> not the select2 widget, since that doesn't
+    create the DOM until we click on it.
+    """
+    id_ = element_id_by_label(browser, identifier)
+    if not id_:
+        id_ = identifier
+
+    # find the real select, not the s2
+    select = browser.find_element_by_xpath('id("%s")' % id_)
+
+    try:
+        return select.find_element_by_xpath(
+            '//option[normalize-space(text()) = "%s"]' % option)
+    except NoSuchElementException:
+        return None
