@@ -339,3 +339,41 @@ def dismiss_alert(step):
     except WebDriverException:
         # PhantomJS is kinda poor
         pass
+
+
+@step(r'I should see item with tooltip "([^"]*)"')
+def see_tooltip(step, tooltip):
+    """
+    Press a button having a given tooltip.
+    """
+    with AssertContextManager(step):
+        assert_true(step, world.browser.find_elements_by_xpath(
+            '//*[@title="%(tooltip)s" or @data-original-title="%(tooltip)s"]' %
+            dict(tooltip=tooltip)))
+
+
+@step(r'I should not see item with tooltip "([^"]*)"')
+def no_see_tooltip(step, tooltip):
+    """
+    Press a button having a given tooltip.
+    """
+    elem = world.browser.find_elements_by_xpath(
+        '//*[@title="%(tooltip)s" or @data-original-title="%(tooltip)s"]' %
+        dict(tooltip=tooltip))
+    assert_true(step, not elem)
+
+
+@step(r'I (?:click|press) item with tooltip "([^"]*)"')
+def press_by_tooltip(step, tooltip):
+    """
+    Press a button having a given tooltip.
+    """
+    with AssertContextManager(step):
+        for button in world.browser.find_elements_by_xpath(
+            '//*[@title="%(tooltip)s" or @data-original-title="%(tooltip)s"]' %
+                dict(tooltip=tooltip)):
+            try:
+                button.click()
+                break
+            except Exception:
+                pass
