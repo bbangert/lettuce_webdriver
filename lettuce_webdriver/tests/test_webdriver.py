@@ -1,5 +1,6 @@
 import os
 import unittest
+from functools import wraps
 
 from lettuce import world
 from lettuce.core import Feature
@@ -12,95 +13,175 @@ for filename in os.listdir(html_pages):
     PAGES[name] = 'file://%s' % os.path.join(html_pages, filename)
 
 
-FEATURE1 = """
+def feature(passed=None):
+    """
+    Decorate a test method to test the feature contained in its docstring.
+
+    Apply the context returned by the method to the feature.
+
+    For example:
+        @feature(passed=3)
+        def test_some_feature(self):
+            '''
+            Feature: This name is returned
+                Scenario: ...
+                    When I {variable}
+            '''
+
+            return dict(variable=something)
+    """
+
+    assert passed is not None
+
+    def outer(func):
+        @wraps(func)
+        def inner(self):
+            import lettuce_webdriver.webdriver
+
+            v = func(self)
+            f = Feature.from_string(func.__doc__.format(**v))
+            feature_result = f.run()
+            scenario_result = feature_result.scenario_results[0]
+            self.assertEquals(len(scenario_result.steps_passed), passed)
+
+        return inner
+
+    return outer
+
+
+class TestUtil(unittest.TestCase):
+    def setUp(self):
+        # Go to an empty page
+        world.browser.get('')
+
+    @feature(passed=5)
+    def test_feature1(self):
+        """
 Feature: Basic page loads
     Scenario: Everything fires up
-        When I visit "%s"
+        When I visit "{page}"
         Then I should see "Hello there!"
         And I should see a link to "Google" with the url "http://google.com/"
         And I should see a link with the url "http://google.com/"
         And I should not see "Bogeyman"
-""" % PAGES['basic_page']
+        """
 
-FEATURE2 = """
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=3)
+    def test_feature2(self):
+        """
 Feature: Basic page loads
     Scenario: Everything fires up
-        When I go to "%s"
+        When I go to "{page}"
         Then  I should see a link to "Google" with the url "http://google.com/"
         And I see "Hello there!"
-""" % PAGES['basic_page']
+        """
 
-FEATURE3 = """
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=3)
+    def test_feature3(self):
+        """
 Feature: Basic page loads
     Scenario: Everything fires up
-        When I go to "%(page)s"
+        When I go to "{page}"
         Then The browser's URL should contain "file://"
         And I should see a link that contains the text "Goo" and the url "http://google.com/"
-""" % {'page': PAGES['basic_page']}
+        """
 
-FEATURE4 = """
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=6)
+    def test_feature4(self):
+        """
 Feature: Basic page linking
     Scenario: Follow links
-        Given I go to "%(link_page)s"
+        Given I go to "{link_page}"
         And I see "Page o link"
         When I click "Next Page"
-        Then I should be at "%(link_dest_page)s"
-        And The browser's URL should be "%(link_dest_page)s"
+        Then I should be at "{link_dest_page}"
+        And The browser's URL should be "{link_dest_page}"
         And The browser's URL should not contain "http://"
-""" % {'link_page': PAGES['link_page'],
-       'link_dest_page': PAGES['link_dest']}
+        """
 
-FEATURE5 = """
+        return {
+            'link_page': PAGES['link_page'],
+            'link_dest_page': PAGES['link_dest']
+        }
+
+    @feature(passed=4)
+    def test_feature5(self):
+        """
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        When I go to "%(page)s"
+        When I go to "{page}"
         Then I should see a form that goes to "basic_page.html"
         And The element with id of "somediv" contains "Hello"
         And The element with id of "somediv" does not contain "bye"
-""" % {'page': PAGES['basic_page']}
+        """
 
-FEATURE6 = """
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=5)
+    def test_feature6(self):
+        """
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        Given I go to "%(page)s"
+        Given I go to "{page}"
         And I fill in "bio" with "everything awesome"
         And I fill in "Password: " with "neat"
         When I press "Submit!"
         Then The browser's URL should contain "bio=everything"
-""" % {'page': PAGES['basic_page']}
+        """
 
-FEATURE7 = """
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=4)
+    def test_feature7(self):
+        """
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        Given I go to "%(page)s"
+        Given I go to "{page}"
         When I check "I have a bike"
         Then The "I have a bike" checkbox should be checked
         And The "I have a car" checkbox should not be checked
-""" % {'page': PAGES['basic_page']}
+        """
 
-FEATURE8 = """
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=5)
+    def test_feature8(self):
+        """
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        Given I go to "%(page)s"
+        Given I go to "{page}"
         And I check "I have a bike"
         And The "I have a bike" checkbox should be checked
         When I uncheck "I have a bike"
         Then The "I have a bike" checkbox should not be checked
-""" % {'page': PAGES['basic_page']}
+        """
 
-FEATURE9 = """
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=3)
+    def test_feature9(self):
+        """
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        Given I go to "%(page)s"
+        Given I go to "{page}"
         When I select "Mercedes" from "car_choice"
         Then The "Mercedes" option from "car_choice" should be selected
-""" % {'page': PAGES['basic_page']}
+        """
 
+        return dict(page=PAGES['basic_page'])
 
-FEATURE10 = '''
+    @feature(passed=3)
+    def test_feature10(self):
+        '''
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        Given I go to "%(page)s"
+        Given I go to "{page}"
         When I select the following from "Favorite Colors:":
             """
             Blue
@@ -111,132 +192,46 @@ Feature: Basic page formstuff
             Blue
             Green
             """
-''' % {'page': PAGES['basic_page']}
+        '''
 
+        return dict(page=PAGES['basic_page'])
 
-FEATURE11 = """
+    @feature(passed=4)
+    def test_feature11(self):
+        """
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        When I go to "%(page)s"
+        When I go to "{page}"
         And I choose "Male"
         Then The "Male" option should be chosen
         And The "Female" option should not be chosen
-""" % {'page': PAGES['basic_page']}
+        """
 
+        return dict(page=PAGES['basic_page'])
 
-FEATURE12 = """
+    @feature(passed=4)
+    def test_feature12(self):
+        """
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        When I go to "%(page)s"
+        When I go to "{page}"
         Then I should see an element with id of "bio_field"
         And I should see an element with id of "somediv" within 2 seconds
         And I should not see an element with id of "hidden_text"
         And I should see "Weeeee" within 1 second
-""" % {'page': PAGES['basic_page']}
+        """
 
+        return dict(page=PAGES['basic_page'])
 
-FEATURE13 = """
+    @feature(passed=2)
+    def test_feature13(self):
+        """
 Feature: Basic page formstuff
     Scenario: Everything fires up
-        When I go to "%(page)s"
+        When I go to "{page}"
         Then I should see "Hello there" within 1 second
         And I should see an element with id of "oops_field" within 1 second
         And I should not see an element with id of "hidden_text"
-""" % {'page': PAGES['basic_page']}
+        """
 
-
-class TestUtil(unittest.TestCase):
-    def setUp(self):
-        # Go to an empty page
-        world.browser.get('')
-
-    def test_feature1(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE1)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 5)
-
-    def test_feature2(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE2)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 3)
-
-    def test_feature3(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE3)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 3)
-
-    def test_feature4(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE4)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 6)
-
-    def test_feature5(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE5)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 4)
-
-    def test_feature6(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE6)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 5)
-
-    def test_feature7(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE7)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 4)
-
-    def test_feature8(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE8)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 5)
-
-    def test_feature9(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE9)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 3)
-
-    def test_feature10(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE10)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 3)
-
-    def test_feature11(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE11)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 4)
-
-    def test_feature12(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE12)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 4)
-
-    def test_feature13(self):
-        import lettuce_webdriver.webdriver
-        f = Feature.from_string(FEATURE13)
-        feature_result = f.run()
-        scenario_result = feature_result.scenario_results[0]
-        self.assertEquals(len(scenario_result.steps_passed), 2)
+        return dict(page=PAGES['basic_page'])
