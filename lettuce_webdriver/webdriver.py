@@ -1,8 +1,7 @@
 """Webdriver support for lettuce"""
 import time
 
-from lettuce import step
-from lettuce import world
+from lettuce import step, world
 
 from lettuce_webdriver.util import (assert_true,
                                     assert_false,
@@ -10,10 +9,10 @@ from lettuce_webdriver.util import (assert_true,
                                     find_button,
                                     find_field,
                                     find_option,
-                                    site_url,
                                     option_in_select)
 
-from selenium.webdriver.support.ui import Select, Alert
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.alert import Alert
 from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
@@ -68,15 +67,6 @@ def wait_for_content(step, browser, content, timeout=15):
 def visit(step, url):
     with AssertContextManager(step):
         world.browser.get(url)
-
-
-@step(r'I visit site page "([^"]*)"')
-def visit_page(step, page):
-    """
-    Visit the specific page of the site.
-    """
-
-    step.given('I visit "%s"' % site_url(page))
 
 
 @step('I go to "(.*?)"$')

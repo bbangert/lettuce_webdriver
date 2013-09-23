@@ -3,7 +3,6 @@
 import socket
 import urlparse
 
-from lettuce.django import server
 from selenium.common.exceptions import NoSuchElementException
 
 from nose.tools import assert_true as nose_assert_true
@@ -135,18 +134,6 @@ def find_field_by_label(browser, field, label):
     if not for_id:
         return False
     return find_field_by_id(browser, field, for_id)
-
-
-def site_url(url):
-    """
-    Determine the server URL.
-    """
-    base_url = 'http://%s' % socket.gethostname()
-
-    if server.port is not 80:
-        base_url += ':%d' % server.port
-
-    return urlparse.urljoin(base_url, url)
 
 
 def option_in_select(browser, identifier, option):
