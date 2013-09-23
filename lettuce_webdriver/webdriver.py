@@ -341,6 +341,18 @@ def dismiss_alert(step):
         pass
 
 
+@step('I click on label "([^"]*)"')
+def click_on_label(step, label):
+    """
+    Click on a label
+    """
+
+    with AssertContextManager(step):
+        elem = world.browser.find_element_by_xpath(
+            '//label[normalize-space(text()) = "%s"]' % label)
+        elem.click()
+
+
 @step(r'I should see item with tooltip "([^"]*)"')
 def see_tooltip(step, tooltip):
     """
