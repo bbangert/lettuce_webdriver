@@ -353,6 +353,20 @@ def click_on_label(step, label):
         elem.click()
 
 
+@step(r'Input "([^"]*)" (?:has|should have) value "([^"]*)"')
+def input_has_value(step, field_name, value):
+    """
+    Check that the form input element has given value.
+    """
+    with AssertContextManager(step):
+        text_field = find_field(world.browser, 'text', field_name) or \
+            find_field(world.browser, 'textarea', field_name) or \
+            find_field(world.browser, 'password', field_name)
+        assert_false(step, text_field is False,
+                     'Can not find a field named "%s"' % field_name)
+        assert_equals(text_field.get_attribute('value'), value)
+
+
 @step(r'I should see item with tooltip "([^"]*)"')
 def see_tooltip(step, tooltip):
     """
