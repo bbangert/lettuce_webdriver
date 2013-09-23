@@ -4,12 +4,13 @@ import time
 from lettuce import step
 from lettuce import world
 
-from lettuce_webdriver.util import assert_true
-from lettuce_webdriver.util import assert_false
-from lettuce_webdriver.util import AssertContextManager
-from lettuce_webdriver.util import find_button
-from lettuce_webdriver.util import find_field
-from lettuce_webdriver.util import find_option
+from lettuce_webdriver.util import (assert_true,
+                                    assert_false,
+                                    AssertContextManager,
+                                    find_button,
+                                    find_field,
+                                    find_option,
+                                    site_url)
 
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import \
@@ -62,10 +63,18 @@ def visit(step, url):
         world.browser.get(url)
 
 
+@step(r'I visit site page "([^"]*)"')
+def visit_page(step, page):
+    """
+    Visit the specific page of the site.
+    """
+
+    step.given('I visit "%s"' % site_url(page))
+
+
 @step('I go to "(.*?)"$')
 def goto(step, url):
-    with AssertContextManager(step):
-        world.browser.get(url)
+    step.given('I visit "%s"' % url)
 
 
 ## Links

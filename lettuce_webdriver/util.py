@@ -1,6 +1,13 @@
 """Utility functions that combine steps to locate elements"""
+
+import socket
+import urlparse
+
+from lettuce.django import server
+
 from nose.tools import assert_true as nose_assert_true
 from nose.tools import assert_false as nose_assert_false
+
 
 class AssertContextManager():
     def __init__(self, step):
@@ -119,3 +126,15 @@ def find_field_by_label(browser, field, label):
     if not for_id:
         return False
     return find_field_by_id(browser, field, for_id)
+
+
+def site_url(url):
+    """
+    Determine the server URL.
+    """
+    base_url = 'http://%s' % socket.gethostname()
+
+    if server.port is not 80:
+        base_url += ':%d' % server.port
+
+    return urlparse.urljoin(base_url, url)
