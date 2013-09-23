@@ -12,10 +12,11 @@ from lettuce_webdriver.util import (assert_true,
                                     find_option,
                                     site_url)
 
-from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import Select, Alert
 from selenium.common.exceptions import (
     NoSuchElementException,
-    StaleElementReferenceException)
+    StaleElementReferenceException,
+    WebDriverException)
 
 
 def contains_content(browser, content):
@@ -310,3 +311,31 @@ def assert_radio_selected(step, value):
 def assert_radio_not_selected(step, value):
     box = find_field(world.browser, 'radio', value)
     assert_true(step, not box.is_selected())
+
+
+@step('I accept the alert')
+def accept_alert(step):
+    """
+    Accept the alert
+    """
+
+    try:
+        alert = Alert(world.browser)
+        alert.accept()
+    except WebDriverException:
+        # PhantomJS is kinda poor
+        pass
+
+
+@step('I dismiss the alert')
+def dismiss_alert(step):
+    """
+    Dismiss the alert
+    """
+
+    try:
+        alert = Alert(world.browser)
+        alert.dismiss()
+    except WebDriverException:
+        # PhantomJS is kinda poor
+        pass
