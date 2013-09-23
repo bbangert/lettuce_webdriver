@@ -8,6 +8,9 @@ from lettuce.django import server
 from nose.tools import assert_true as nose_assert_true
 from nose.tools import assert_false as nose_assert_false
 
+# pylint:disable=missing-docstring,redefined-outer-name,redefined-builtin
+# pylint:disable=invalid-name
+
 
 class AssertContextManager():
     def __init__(self, step):
@@ -39,7 +42,8 @@ def assert_false(step, exp, msg=None):
 
 def element_id_by_label(browser, label):
     """Return the id of a label's for attribute"""
-    for_id = browser.find_elements_by_xpath('//label[contains(., "%s")]' % label)
+    for_id = browser.find_elements_by_xpath('//label[contains(., "%s")]' %
+                                            label)
     if not for_id:
         return False
     return for_id[0].get_attribute('for')
@@ -83,7 +87,8 @@ def find_option(browser, select_name, option_name):
     option_box = find_field(select_box, 'option', option_name)
     if not option_box:
         # Locate by contents
-        option_box = select_box.find_element_by_xpath('.//option[contains(., "%s")]' % option_name)
+        option_box = select_box.find_element_by_xpath(
+            './/option[contains(., "%s")]' % option_name)
     return option_box
 
 
