@@ -109,19 +109,21 @@ def should_include_link_text(step, link_text, link_url):
 @step('The element with id of "(.*?)" contains "(.*?)"$')
 def element_contains(step, element_id, value):
     return world.browser.find_element_by_xpath(
-        '//*[@id="%s"][contains(., "%s")]' %
-        (element_id, value))
+        'id("{id}")[contains(text(), "{value}")]'.format(
+            id=element_id, value=value))
 
 
 @step('The element with id of "(.*?)" does not contain "(.*?)"$')
 def element_not_contains(step, element_id, value):
-    elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
-    assert_true(step, value not in elem.text)
+    elem = world.browser.find_elements_by_xpath(
+        'id("{id}")[contains(text(), "{value}")]'.format(
+            id=element_id, value=value))
+    assert_false(step, elem)
 
 
 @step(r'I should see an element with id of "(.*?)" within (\d+) seconds?$')
 def should_see_id_in_seconds(step, element_id, timeout):
-    elem = wait_for_elem(world.browser, '//*[@id="%s"]' % element_id,
+    elem = wait_for_elem(world.browser, 'id("%s")' % element_id,
                          int(timeout))
     assert_true(step, elem)
     elem = elem[0]
@@ -130,14 +132,14 @@ def should_see_id_in_seconds(step, element_id, timeout):
 
 @step('I should see an element with id of "(.*?)"$')
 def should_see_id(step, element_id):
-    elem = world.browser.find_element_by_xpath('//*[@id="%s"]' % element_id)
+    elem = world.browser.find_element_by_xpath('id("%s")' % element_id)
     assert_true(step, elem.is_displayed())
 
 
 @step('I should not see an element with id of "(.*?)"$')
 def should_not_see_id(step, element_id):
     try:
-        elem = world.browser.find_element_by_xpath('//*[@id="%s"]' %
+        elem = world.browser.find_element_by_xpath('id("%s")' %
                                                    element_id)
         assert_true(step, not elem.is_displayed())
     except NoSuchElementException:
@@ -241,7 +243,7 @@ def element_focused(step, id, not_):
     Check if the element is focused
     """
 
-    elem = world.browser.find_elem_by_xpath('id({id})'.format(id=id))
+    elem = world.browser.find_elem_by_xpath('id("{id}")'.format(id=id))
 
     if not_ == 'not':
         assert_false(step, elem.is_selected())
