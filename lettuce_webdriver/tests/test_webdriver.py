@@ -246,3 +246,31 @@ Feature: Hidden text 2
         """
 
         return dict(page=PAGES['basic_page'])
+
+    @feature(passed=5)
+    def test_alert_accept(self):
+        """
+Feature: test alert accept
+    Scenario: alerts
+        When I go to "{page}"
+        Then I should see an alert with text "This is an alerting alert"
+        When I accept the alert
+        Then I should not see an alert
+        And I should see "true"
+        """
+
+        return dict(page=PAGES['alert_page'])
+
+    @feature(passed=5)
+    def test_alert_dismiss(self):
+        """
+Feature: test alert accept
+    Scenario: alerts
+        When I go to "{page}"
+        Then I should see an alert with text "This is an alerting alert"
+        When I dismiss the alert
+        Then I should not see an alert
+        And I should see "false"
+        """
+
+        return dict(page=PAGES['alert_page'])

@@ -16,6 +16,7 @@ from selenium.webdriver.common.alert import Alert
 from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
+    NoAlertPresentException,
     WebDriverException)
 
 from nose.tools import assert_equals
@@ -381,6 +382,34 @@ def dismiss_alert(step):
         alert.dismiss()
     except WebDriverException:
         # PhantomJS is kinda poor
+        pass
+
+
+@step(r'I should see an alert with text "([^"]*)"')
+def check_alert(step, text):
+    """
+    Check the alert text
+    """
+
+    try:
+        alert = Alert(world.browser)
+        assert_equals(alert.text, text)
+    except WebDriverException:
+        # PhantomJS is kinda poor
+        pass
+
+
+@step('I should not see an alert')
+def check_no_alert(step):
+    """
+    Check there is no alert
+    """
+
+    try:
+        alert = Alert(world.browser)
+        raise AssertionError("Should not see an alert. Alert '%s' shown." %
+                             alert.text)
+    except NoAlertPresentException:
         pass
 
 
