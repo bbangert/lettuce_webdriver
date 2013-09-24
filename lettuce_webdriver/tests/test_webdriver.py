@@ -353,3 +353,14 @@ Feature: assert value
         """
 
         return dict(page=PAGES['basic_page'])
+
+    @feature(passed=2)
+    def test_page_title(self):
+        """
+Feature: assert value
+    Scenario: basic page
+        When I go to "{page}"
+        Then the page title should be "A Basic Page"
+        """
+
+        return dict(page=PAGES['basic_page'])

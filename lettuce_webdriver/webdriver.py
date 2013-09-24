@@ -478,3 +478,13 @@ def press_by_tooltip(step, tooltip):
                 break
             except Exception:
                 pass
+
+
+@step(r'The page title should be "([^"]*)"')
+def page_title(step, title):
+    """
+    Check that the page title matches the given one.
+    """
+
+    with AssertContextManager(step):
+        assert_equals(world.browser.title, title)
