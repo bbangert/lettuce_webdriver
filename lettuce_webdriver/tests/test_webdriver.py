@@ -305,6 +305,7 @@ Feature: test tooltips
 
         return dict(page=PAGES['tooltips'])
 
+    @feature(passed=4)
     def test_labels(self):
         """
 Feature: test labels
@@ -313,6 +314,18 @@ Feature: test labels
         And I click on label "Favorite Colors:"
         Then element with id "fav_colors" should be focused
         And element with id "bio_field" should not be focused
+        """
+
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=2, failed=1)
+    def test_labels_fail(self):
+        """
+Feature: test labels fail
+    Scenario: basic page
+        When I go to "{page}"
+        And I click on label "Favorite Colors:"
+        Then element with id "fav_colors" should not be focused
         """
 
         return dict(page=PAGES['basic_page'])

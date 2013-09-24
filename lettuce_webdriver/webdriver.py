@@ -237,18 +237,28 @@ def click_on_label(step, label):
         elem.click()
 
 
-@step(r'Element with id "([^"]*)" should be (?:|not) focused')
-def element_focused(step, id, not_):
+@step(r'Element with id "([^"]*)" should be focused')
+def element_focused(step, id):
     """
     Check if the element is focused
     """
 
-    elem = world.browser.find_elem_by_xpath('id("{id}")'.format(id=id))
+    elem = world.browser.find_element_by_xpath('id("{id}")'.format(id=id))
+    focused = world.browser.switch_to_active_element()
 
-    if not_ == 'not':
-        assert_false(step, elem.is_selected())
-    else:
-        assert_true(step, elem.is_selected())
+    assert_true(step, elem == focused)
+
+
+@step(r'Element with id "([^"]*)" should not be focused')
+def element_not_focused(step, id):
+    """
+    Check if the element is not focused
+    """
+
+    elem = world.browser.find_element_by_xpath('id("{id}")'.format(id=id))
+    focused = world.browser.switch_to_active_element()
+
+    assert_false(step, elem == focused)
 
 
 @step(r'Input "([^"]*)" (?:has|should have) value "([^"]*)"')
