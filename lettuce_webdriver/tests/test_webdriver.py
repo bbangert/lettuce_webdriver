@@ -191,6 +191,17 @@ Feature: Combo boxes
 
         return dict(page=PAGES['basic_page'])
 
+    @feature(passed=1, failed=1)
+    def test_combo_boxes_fail(self):
+        """
+Feature: Combo boxes fail
+    Scenario: Everything fires up
+        Given I go to "{page}"
+        Then I should not see option "Mercedes" in selector "car_choice"
+        """
+
+        return dict(page=PAGES['basic_page'])
+
     @feature(passed=3)
     def test_multi_combo_boxes(self):
         '''
