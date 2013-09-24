@@ -329,3 +329,27 @@ Feature: test labels fail
         """
 
         return dict(page=PAGES['basic_page'])
+
+    @feature(passed=3)
+    def test_input_values(self):
+        """
+Feature: assert value
+    Scenario: basic page
+        When I go to "{page}"
+        And I fill in "username" with "Danni"
+        Then input "username" has value "Danni"
+        """
+
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=2, failed=1)
+    def test_input_values_fail(self):
+        """
+Feature: assert value
+    Scenario: basic page
+        When I go to "{page}"
+        And I fill in "username" with "Danni"
+        Then input "username" has value "Ricky"
+        """
+
+        return dict(page=PAGES['basic_page'])
