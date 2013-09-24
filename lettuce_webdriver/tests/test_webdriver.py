@@ -13,7 +13,7 @@ for filename in os.listdir(html_pages):
     PAGES[name] = 'file://%s' % os.path.join(html_pages, filename)
 
 
-def feature(passed=None):
+def feature(passed=None, failed=0, skipped=0):
     """
     Decorate a test method to test the feature contained in its docstring.
 
@@ -42,7 +42,10 @@ def feature(passed=None):
             f = Feature.from_string(func.__doc__.format(**v))
             feature_result = f.run()
             scenario_result = feature_result.scenario_results[0]
+
             self.assertEquals(len(scenario_result.steps_passed), passed)
+            self.assertEquals(len(scenario_result.steps_failed), failed)
+            self.assertEquals(len(scenario_result.steps_skipped), skipped)
 
         return inner
 
@@ -209,7 +212,7 @@ Feature: Radio buttons
 
         return dict(page=PAGES['basic_page'])
 
-    @feature(passed=4)
+    @feature(passed=4, failed=1, skipped=0)
     def test_hidden_text(self):
         """
 Feature: Hidden text
@@ -223,7 +226,7 @@ Feature: Hidden text
 
         return dict(page=PAGES['basic_page'])
 
-    @feature(passed=2)
+    @feature(passed=2, failed=1, skipped=1)
     def test_hidden_text_2(self):
         """
 Feature: Hidden text 2
