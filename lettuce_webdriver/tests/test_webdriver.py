@@ -176,12 +176,15 @@ Feature: Checkboxes unchecked
 
         return dict(page=PAGES['basic_page'])
 
-    @feature(passed=3)
+    @feature(passed=6)
     def test_combo_boxes(self):
         """
 Feature: Combo boxes
     Scenario: Everything fires up
         Given I go to "{page}"
+        Then I should see option "Mercedes" in selector "car_choice"
+        And I should see option "Volvo" in selector "car_choice"
+        And I should not see option "Skoda" in selector "car_choice"
         When I select "Mercedes" from "car_choice"
         Then The "Mercedes" option from "car_choice" should be selected
         """

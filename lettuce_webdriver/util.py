@@ -136,22 +136,19 @@ def find_field_by_label(browser, field, label):
     return find_field_by_id(browser, field, for_id)
 
 
-def option_in_select(browser, identifier, option):
+def option_in_select(browser, select_name, option):
     """
     Returns the Element specified by @option or None
 
     Looks at the real <select> not the select2 widget, since that doesn't
     create the DOM until we click on it.
     """
-    id_ = element_id_by_label(browser, identifier)
-    if not id_:
-        id_ = identifier
 
-    # find the real select, not the s2
-    select = browser.find_element_by_xpath('id("%s")' % id_)
+    select = find_field(browser, 'select', select_name)
+    assert select
 
     try:
         return select.find_element_by_xpath(
-            '//option[normalize-space(text()) = "%s"]' % option)
+            './/option[normalize-space(text()) = "%s"]' % option)
     except NoSuchElementException:
         return None
