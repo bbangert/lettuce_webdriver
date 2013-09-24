@@ -43,9 +43,17 @@ def feature(passed=None, failed=0, skipped=0):
             feature_result = f.run()
             scenario_result = feature_result.scenario_results[0]
 
-            self.assertEquals(len(scenario_result.steps_passed), passed)
-            self.assertEquals(len(scenario_result.steps_failed), failed)
-            self.assertEquals(len(scenario_result.steps_skipped), skipped)
+            try:
+                self.assertEquals(len(scenario_result.steps_passed), passed)
+                self.assertEquals(len(scenario_result.steps_failed), failed)
+                self.assertEquals(len(scenario_result.steps_skipped), skipped)
+            except AssertionError:
+                print "Failed", scenario_result.steps_failed
+                if scenario_result.steps_failed:
+                    print scenario_result.steps_failed[-1].why.traceback
+                print "Skipped", scenario_result.steps_skipped
+
+                raise
 
         return inner
 
