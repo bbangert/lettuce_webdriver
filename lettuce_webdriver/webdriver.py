@@ -414,18 +414,19 @@ def check_no_alert(step):
 
 
 # Tooltips
-@step(r'I should see item with tooltip "([^"]*)"')
+@step(r'I should see an element with tooltip "([^"]*)"')
 def see_tooltip(step, tooltip):
     """
     Press a button having a given tooltip.
     """
-    with AssertContextManager(step):
-        assert_true(step, world.browser.find_elements_by_xpath(
-            '//*[@title="%(tooltip)s" or @data-original-title="%(tooltip)s"]' %
-            dict(tooltip=tooltip)))
+    elem = world.browser.find_elements_by_xpath(
+        '//*[@title="%(tooltip)s" or @data-original-title="%(tooltip)s"]' %
+        dict(tooltip=tooltip))
+    elem = [e for e in elem if e.is_displayed()]
+    assert_true(step, elem)
 
 
-@step(r'I should not see item with tooltip "([^"]*)"')
+@step(r'I should not see an element with tooltip "([^"]*)"')
 def no_see_tooltip(step, tooltip):
     """
     Press a button having a given tooltip.
@@ -433,10 +434,11 @@ def no_see_tooltip(step, tooltip):
     elem = world.browser.find_elements_by_xpath(
         '//*[@title="%(tooltip)s" or @data-original-title="%(tooltip)s"]' %
         dict(tooltip=tooltip))
+    elem = [e for e in elem if e.is_displayed()]
     assert_true(step, not elem)
 
 
-@step(r'I (?:click|press) item with tooltip "([^"]*)"')
+@step(r'I (?:click|press) the element with tooltip "([^"]*)"')
 def press_by_tooltip(step, tooltip):
     """
     Press a button having a given tooltip.

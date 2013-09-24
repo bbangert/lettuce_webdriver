@@ -274,3 +274,18 @@ Feature: test alert accept
         """
 
         return dict(page=PAGES['alert_page'])
+
+    @feature(passed=6)
+    def test_tooltips(self):
+        """
+Feature: test tooltips
+    Scenario: tooltips
+        When I go to "{page}"
+        Then I should see an element with tooltip "A tooltip"
+        And I should not see an element with tooltip "Does not exist"
+        And I should not see an element with tooltip "Hidden"
+        When I click the element with tooltip "A tooltip"
+        Then the browser's URL should contain "#anchor"
+        """
+
+        return dict(page=PAGES['tooltips'])
