@@ -52,6 +52,7 @@ def feature(passed=None, failed=0, skipped=0):
                 if scenario_result.steps_failed:
                     print scenario_result.steps_failed[-1].why.traceback
                 print "Skipped", scenario_result.steps_skipped
+                print world.browser.page_source
 
                 raise
 
@@ -289,3 +290,15 @@ Feature: test tooltips
         """
 
         return dict(page=PAGES['tooltips'])
+
+    def test_labels(self):
+        """
+Feature: test labels
+    Scenario: basic page
+        When I go to "{page}"
+        And I click on label "Favorite Colors:"
+        Then element with id "fav_colors" should be focused
+        And element with id "bio_field" should not be focused
+        """
+
+        return dict(page=PAGES['basic_page'])
