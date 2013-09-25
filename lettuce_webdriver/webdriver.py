@@ -275,6 +275,24 @@ def input_has_value(step, field_name, value):
         assert_equals(text_field.get_attribute('value'), value)
 
 
+@step(r'I submit the only form')
+def submit_the_only_form(step):
+    """
+    Look for a form on the page and submit it.
+    """
+    form = world.browser.find_element_by_xpath('//form')
+    form.submit()
+
+
+@step(r'I submit the form "([^"]*)"')
+def submit_form(step, url):
+    """
+    Submit the form having given action URL.
+    """
+    form = world.browser.find_element_by_xpath('//form[@action="%s"]' % url)
+    form.submit()
+
+
 # Checkboxes
 @step('I check "(.*?)"$')
 def check_checkbox(step, value):
