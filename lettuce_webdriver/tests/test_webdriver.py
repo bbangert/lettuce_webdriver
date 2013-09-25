@@ -364,3 +364,16 @@ Feature: assert value
         """
 
         return dict(page=PAGES['basic_page'])
+
+    @feature(passed=4)
+    def test_submit_only(self):
+        """
+Feature: submit only form
+    Scenario: basic page
+        When I go to "{page}"
+        And I submit the only form
+        Then the browser's URL should contain "bio="
+        And the browser's URL should contain "user="
+        """
+
+        return dict(page=PAGES['basic_page'])
