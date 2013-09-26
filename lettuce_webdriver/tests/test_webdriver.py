@@ -383,7 +383,7 @@ Feature: submit only form
 Feature: submit only form
     Scenario: basic page
         When I go to "{page}"
-        And I submit the form "{page}"
+        And I submit the form with action "{page}"
         Then the browser's URL should contain "bio="
         And the browser's URL should contain "user="
         """

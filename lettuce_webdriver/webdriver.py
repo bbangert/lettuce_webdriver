@@ -284,8 +284,17 @@ def submit_the_only_form(step):
     form.submit()
 
 
-@step(r'I submit the form "([^"]*)"')
-def submit_form(step, url):
+@step(r'I submit the form with id "([^"]*)"')
+def submit_form_id(step, id):
+    """
+    Submit the form having given id.
+    """
+    form = world.browser.find_element_by_xpath('id("{id}")'.format(id=id))
+    form.submit()
+
+
+@step(r'I submit the form with action "([^"]*)"')
+def submit_form_action(step, url):
     """
     Submit the form having given action URL.
     """
