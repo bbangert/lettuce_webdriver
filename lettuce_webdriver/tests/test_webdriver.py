@@ -378,12 +378,26 @@ Feature: submit only form
 
         return dict(page=PAGES['basic_page'])
 
+    @feature(passed=4)
     def test_submit_action(self):
         """
 Feature: submit only form
     Scenario: basic page
         When I go to "{page}"
-        And I submit the form with action "{page}"
+        And I submit the form with action "basic_page.html"
+        Then the browser's URL should contain "bio="
+        And the browser's URL should contain "user="
+        """
+
+        return dict(page=PAGES['basic_page'])
+
+    @feature(passed=4)
+    def test_submit_id(self):
+        """
+Feature: submit only form
+    Scenario: basic page
+        When I go to "{page}"
+        And I submit the form with id "the-form"
         Then the browser's URL should contain "bio="
         And the browser's URL should contain "user="
         """
