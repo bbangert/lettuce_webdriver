@@ -32,6 +32,12 @@ def fill_in_by_selector(step, selector, value):
     elem.send_keys(value)
 
 
+@step(r'I submit \$\("(.*?)"\)')
+def submit_by_selector(step, selector):
+    elem = world.browser.find_element_by_css_selector(selector)
+    elem.submit()
+
+
 @step(r'I check \$\("(.*?)"\)$')
 def check_by_selector(step, selector):
     elem = world.browser.find_element_by_css_selector(selector)
