@@ -23,6 +23,8 @@ from nose.tools import assert_equals
 
 # pylint:disable=missing-docstring,redefined-outer-name
 
+from css_selector_steps import *
+
 
 def contains_content(browser, content):
     # Search for an element that contains the whole of the text we're looking
