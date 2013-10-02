@@ -22,6 +22,7 @@ from itertools import chain
 import os.path
 import sys
 import traceback
+import copy
 
 from importlib import import_module
 
@@ -130,10 +131,10 @@ class ParallelRunner(object):
             worker_process, [(self, filename) for filename in features_files]
         )
         
-        #all_total = TotalResult(chain(*[tr['results'] for tr in test_results]))
+        all_total = sum([tr['total'] for tr in test_results], ParallelTotalResult())
         output = '\n'.join(chain(*[(tr['stdout'], tr['stderr']) for tr in test_results]))
         sys.stdout.write(output)
-        #return all_total
+        return all_total
 
 def worker_process(args):
     self, filename = args
@@ -179,26 +180,32 @@ def worker_process(args):
     }
 
 class ParallelTotalResult(object):
-    def __init__(self, total):
-        feature_results = total.feature_results
-        self.features_ran = len(feature_results)
-        self.features_passed = len([result for result in feature_results if result.passed])
+    def __init__(self, total=None):
         self.steps_passed = 0
         self.steps_failed = 0
         self.steps_skipped = 0
         self.steps_undefined = 0
         self.steps = 0
         scenario_results = []
-        for feature_result in feature_results:
-            for scenario_result in feature_result.scenario_results:
-                self.steps_passed += len(scenario_result.steps_passed)
-                self.steps_failed += len(scenario_result.steps_failed)
-                self.steps_skipped += len(scenario_result.steps_skipped)
-                self.steps_undefined += len(scenario_result.steps_undefined)
-                self.steps += scenario_result.total_steps
-                scenario_results.append(scenario_result)
-        self.scenarios_ran = len(scenario_results)
-        self.scenarios_passed = len([result for result in scenario_results if result.passed])
+        if total:
+            feature_results = total.feature_results
+            self.features_ran = len(feature_results)
+            self.features_passed = len([result for result in feature_results if result.passed])
+            for feature_result in feature_results:
+                for scenario_result in feature_result.scenario_results:
+                    self.steps_passed += len(scenario_result.steps_passed)
+                    self.steps_failed += len(scenario_result.steps_failed)
+                    self.steps_skipped += len(scenario_result.steps_skipped)
+                    self.steps_undefined += len(scenario_result.steps_undefined)
+                    self.steps += scenario_result.total_steps
+                    scenario_results.append(scenario_result)
+            self.scenarios_ran = len(scenario_results)
+            self.scenarios_passed = len([result for result in scenario_results if result.passed])
+        else:
+            self.features_ran = 0
+            self.features_passed = 0
+            self.scenarios_ran = 0
+            self.scenarios_passed = 0
 
     def _filter_proposed_definitions(self):
         raise NotImplementedError()
@@ -206,4 +213,12 @@ class ParallelTotalResult(object):
     @property
     def proposed_definitions(self):
         raise NotImplementedError()
+    
+    def __add__(self, other):
+        new_ptr = copy.copy(self)
+        for attr in new_ptr.__dict__:
+            if isinstance(getattr(new_ptr, attr), int):
+                setattr(new_ptr, attr,
+                        getattr(new_ptr, attr) + getattr(other, attr))
+        return new_ptr
 
