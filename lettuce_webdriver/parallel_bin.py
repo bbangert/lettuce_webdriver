@@ -20,6 +20,7 @@ def main(args=sys.argv[1:]):
     parser.add_option('-p', '--parallelization',
                       dest='parallelization',
                       default=5,
+                      type="int",
                       help='How many parallel processes to use')
 
     parser.add_option("-s", "--scenarios",
