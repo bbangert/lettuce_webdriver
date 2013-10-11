@@ -6,6 +6,8 @@ from lettuce import world
 from lettuce_webdriver.util import assert_true
 from lettuce_webdriver.util import assert_false
 
+from selenium.common.exceptions import WebDriverException
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -13,11 +15,37 @@ def wait_for_elem(browser, sel, timeout=15):
     start = time.time()
     elems = []
     while time.time() - start < timeout:
-        elems = browser.find_elements_by_css_selector(sel)
+        elems = find_elements_by_jquery(browser, sel)
         if elems:
             return elems
         time.sleep(0.2)
     return elems
+
+
+def load_script(url):
+    """Ensure that JavaScript at a given URL is available to the browser."""
+    browser.execute_script("""
+    var script_tag = document.createElement("script");
+    script_tag.setAttribute("type", "text/javascript");
+    script_tag.setAttribute("src", arguments[0]);
+    document.getElementsByTagName("head")[0].appendChild(script_tag);
+    """, url)
+
+
+def find_elements_by_jquery(browser, selector):
+    """Find HTML elements using jQuery-style selectors.
+    
+    Ensures that jQuery is available to the browser; if it gets a
+    WebDriverException that looks like """
+    try:
+        return browser.execute_script("""return $(arguments[0]).get();""", selector)
+    except WebDriverException as e:
+        if e.msg == u'$ is not defined':
+            load_script("//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
+            return browser.execute_script("""return $(arguments[0]).get();""", selector)
+        else:
+            raise
+
 
 @step(r'There should be an element matching \$\("(.*?)"\) within (\d+) seconds?$')
 def wait_for_element_by_selector(step, selector, seconds):
@@ -27,26 +55,34 @@ def wait_for_element_by_selector(step, selector, seconds):
 
 @step(r'I fill in \$\("(.*?)"\) with "(.*?)"$')
 def fill_in_by_selector(step, selector, value):
-    elem = world.browser.find_element_by_css_selector(selector)
+    elem = find_elements_by_jquery(world.browser, selector)[0]
     elem.clear()
     elem.send_keys(value)
 
 
 @step(r'I submit \$\("(.*?)"\)')
 def submit_by_selector(step, selector):
-    elem = world.browser.find_element_by_css_selector(selector)
+    elem = find_elements_by_jquery(world.browser, selector)[0]
     elem.submit()
 
 
 @step(r'I check \$\("(.*?)"\)$')
 def check_by_selector(step, selector):
-    elem = world.browser.find_element_by_css_selector(selector)
+    elem = find_elements_by_jquery(world.browser, selector)[0]
     if not elem.is_selected():
         elem.click()
+
+
+@step(r'I click \$\("(.*?)"\)$')
+def click_by_selector(step, selector):
+    # No need for separate button press step with selector style.
+    elem = find_elements_by_jquery(world.browser, selector)[0]
+    elem.click()
 
 
 __all__ = [
     'wait_for_element_by_selector',
     'fill_in_by_selector',
     'check_by_selector',
+    'click_by_selector',
 ]
