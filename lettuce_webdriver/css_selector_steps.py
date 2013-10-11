@@ -80,6 +80,13 @@ def click_by_selector(step, selector):
     elem.click()
 
 
+@step(r'I follow the link \$\("(.*?)"\)$')
+def click_by_selector(step, selector):
+    elem = find_elements_by_jquery(world.browser, selector)[0]
+    href = elem.get_attribute('href')
+    world.browser.get(href)
+
+
 __all__ = [
     'wait_for_element_by_selector',
     'fill_in_by_selector',
