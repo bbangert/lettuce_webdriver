@@ -47,6 +47,12 @@ def find_elements_by_jquery(browser, selector):
             raise
 
 
+@step(r'There should be an element matching \$\("(.*?)"\)$')
+def check_element_by_selector(step, selector):
+    elems = find_elements_by_jquery(world.browser, selector)
+    assert_true(step, elems)
+
+
 @step(r'There should be an element matching \$\("(.*?)"\) within (\d+) seconds?$')
 def wait_for_element_by_selector(step, selector, seconds):
     elems = wait_for_elem(world.browser, selector, seconds)
@@ -87,9 +93,17 @@ def click_by_selector(step, selector):
     world.browser.get(href)
 
 
+@step(r'\$\("(.*?)"\) should be selected$')
+def click_by_selector(step, selector):
+    # No need for separate button press step with selector style.
+    elem = find_elements_by_jquery(world.browser, selector)[0]
+    assert_true(step, elem.is_selected())
+
+
 __all__ = [
     'wait_for_element_by_selector',
     'fill_in_by_selector',
     'check_by_selector',
     'click_by_selector',
+    'check_element_by_selector',
 ]
