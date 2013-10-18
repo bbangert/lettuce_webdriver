@@ -127,13 +127,16 @@ class ParallelRunner(object):
             return
 
         processes = Pool(processes=self.parallelization)
-        test_results = processes.map(
+        test_results_it = processes.imap_unordered(
             worker_process, [(self, filename) for filename in features_files]
         )
         
-        all_total = sum([tr['total'] for tr in test_results], ParallelTotalResult())
-        output = '\n'.join(chain(*[(tr['stdout'], tr['stderr']) for tr in test_results]))
-        sys.stdout.write(output)
+        all_total = ParallelTotalResult()
+        for result in test_results_it:
+            all_total += result['total']
+            sys.stdout.write(result['stdout'])
+            sys.stderr.write(result['stderr'])
+
         return all_total
 
 def worker_process(args):
