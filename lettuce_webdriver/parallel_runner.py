@@ -62,11 +62,11 @@ class ParallelRunner(object):
         """
 
         self.tags = tags
-        self.single_feature = None
+        self.explicit_features = []
 
-        if os.path.isfile(base_path) and os.path.exists(base_path):
-            self.single_feature = base_path
-            base_path = os.path.dirname(base_path)
+        if isinstance(base_path, list):
+            self.explicit_features = base_path
+            base_path = os.path.dirname(base_path[0])
 
         sys.path.insert(0, base_path)
         self.loader = fs.FeatureLoader(base_path)
@@ -115,12 +115,12 @@ class ParallelRunner(object):
             return
 
         results = []
-        if self.single_feature:
-            features_files = [self.single_feature]
+        if self.explicit_features:
+            features_files = self.explicit_features
         else:
             features_files = self.loader.find_feature_files()
-            if self.random:
-                random.shuffle(features_files)
+        if self.random:
+            random.shuffle(features_files)
 
         if not features_files:
             self.output.print_no_features_found(self.loader.base_dir)

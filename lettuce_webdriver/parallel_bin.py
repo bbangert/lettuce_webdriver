@@ -70,7 +70,7 @@ def main(args=sys.argv[1:]):
 
     options, args = parser.parse_args(args)
     if args:
-        base_path = os.path.abspath(args[0])
+        base_path = [os.path.abspath(arg) for arg in args]
 
     try:
         options.verbosity = int(options.verbosity)
