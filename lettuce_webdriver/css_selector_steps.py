@@ -55,7 +55,7 @@ def check_element_by_selector(step, selector):
 
 @step(r'There should be an element matching \$\("(.*?)"\) within (\d+) seconds?$')
 def wait_for_element_by_selector(step, selector, seconds):
-    elems = wait_for_elem(world.browser, selector, seconds)
+    elems = wait_for_elem(world.browser, selector, int(seconds))
     assert_true(step, elems)
 
 
