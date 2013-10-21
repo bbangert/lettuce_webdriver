@@ -22,7 +22,7 @@ def wait_for_elem(browser, sel, timeout=15):
     return elems
 
 
-def load_script(url):
+def load_script(browser, url):
     """Ensure that JavaScript at a given URL is available to the browser."""
     browser.execute_script("""
     var script_tag = document.createElement("script");
@@ -40,8 +40,8 @@ def find_elements_by_jquery(browser, selector):
     try:
         return browser.execute_script("""return $(arguments[0]).get();""", selector)
     except WebDriverException as e:
-        if e.msg == u'$ is not defined':
-            load_script("//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
+        if e.msg.startswith(u'$ is not defined'):
+            load_script(browser, "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
             return browser.execute_script("""return $(arguments[0]).get();""", selector)
         else:
             raise
