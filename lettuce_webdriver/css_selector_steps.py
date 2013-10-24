@@ -74,6 +74,12 @@ def wait_for_element_by_selector(step, selector, seconds):
     assert_true(step, elems)
 
 
+@step(r'There should be exactly (\d+) elements matching \$\("(.*?)"\)$')
+def count_elements_exactly_by_selector(step, number, selector):
+    elems = find_elements_by_jquery(world.browser, selector)
+    assert_true(step, len(elems) == int(number))
+
+
 @step(r'I fill in \$\("(.*?)"\) with "(.*?)"$')
 def fill_in_by_selector(step, selector, value):
     elem = find_elements_by_jquery(world.browser, selector)[0]
