@@ -36,13 +36,28 @@ def find_elements_by_jquery(browser, selector):
     """Find HTML elements using jQuery-style selectors.
     
     Ensures that jQuery is available to the browser; if it gets a
-    WebDriverException that looks like """
+    WebDriverException that looks like jQuery is not available, it attempts to
+    include it and reexecute the script."""
     try:
         return browser.execute_script("""return $(arguments[0]).get();""", selector)
     except WebDriverException as e:
         if e.msg.startswith(u'$ is not defined'):
             load_script(browser, "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
             return browser.execute_script("""return $(arguments[0]).get();""", selector)
+        else:
+            raise
+
+
+def find_parents_by_jquery(browser, selector):
+    """Find HTML elements' parents using jQuery-style selectors.
+    
+    In addition to reliably including jQuery, this also finds the pa"""
+    try:
+        return browser.execute_script("""return $(arguments[0]).parent().get();""", selector)
+    except WebDriverException as e:
+        if e.msg.startswith(u'$ is not defined'):
+            load_script(browser, "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
+            return browser.execute_script("""return $(arguments[0]).parent().get();""", selector)
         else:
             raise
 
@@ -99,6 +114,15 @@ def click_by_selector(step, selector):
     elem = find_elements_by_jquery(world.browser, selector)[0]
     assert_true(step, elem.is_selected())
 
+
+@step(r'I select \$\("(.*?)"\)$')
+def select_by_selector(step, selector):
+    option = find_elements_by_jquery(world.browser, selector)[0]
+    selector = find_parents_by_jquery(world.browser, selector)[0]
+    selector.click()
+    time.sleep(0.3)
+    option.click()
+    assert_true(step, option.is_selected())
 
 __all__ = [
     'wait_for_element_by_selector',
