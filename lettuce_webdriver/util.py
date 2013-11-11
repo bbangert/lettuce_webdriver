@@ -42,8 +42,8 @@ def assert_false(step, exp, msg=None):
 
 def element_id_by_label(browser, label):
     """Return the id of a label's for attribute"""
-    for_id = browser.find_elements_by_xpath('//label[contains(., "%s")]' %
-                                            label)
+    for_id = browser.find_elements_by_xpath(str('//label[contains(., "%s")]' %
+                                                label))
     if not for_id:
         return False
     return for_id[0].get_attribute('for')
@@ -87,8 +87,8 @@ def find_option(browser, select_name, option_name):
     option_box = find_field(select_box, 'option', option_name)
     if not option_box:
         # Locate by contents
-        option_box = select_box.find_element_by_xpath(
-            './/option[contains(., "%s")]' % option_name)
+        option_box = select_box.find_element_by_xpath(str(
+            './/option[contains(., "%s")]' % option_name))
     return option_box
 
 
@@ -106,19 +106,19 @@ def find_field(browser, field, value):
 
 def find_field_by_id(browser, field, id):
     xpath = field_xpath(field, 'id')
-    elems = browser.find_elements_by_xpath(xpath % id)
+    elems = browser.find_elements_by_xpath(str(xpath % id))
     return elems[0] if elems else False
 
 
 def find_field_by_name(browser, field, name):
     xpath = field_xpath(field, 'name')
-    elems = browser.find_elements_by_xpath(xpath % name)
+    elems = browser.find_elements_by_xpath(str(xpath % name))
     return elems[0] if elems else False
 
 
 def find_field_by_value(browser, field, name):
     xpath = field_xpath(field, 'value')
-    elems = browser.find_elements_by_xpath(xpath % name)
+    elems = browser.find_elements_by_xpath(str(xpath % name))
     return elems[0] if elems else False
 
 
@@ -148,7 +148,7 @@ def option_in_select(browser, select_name, option):
     assert select
 
     try:
-        return select.find_element_by_xpath(
-            './/option[normalize-space(text()) = "%s"]' % option)
+        return select.find_element_by_xpath(str(
+            './/option[normalize-space(text()) = "%s"]' % option))
     except NoSuchElementException:
         return None
