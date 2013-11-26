@@ -39,11 +39,11 @@ def find_elements_by_jquery(browser, selector):
     WebDriverException that looks like jQuery is not available, it attempts to
     include it and reexecute the script."""
     try:
-        return browser.execute_script("""return $(arguments[0]).get();""", selector)
+        return browser.execute_script("""return ($ || jQuery)(arguments[0]).get();""", selector)
     except WebDriverException as e:
         if e.msg.startswith(u'$ is not defined'):
             load_script(browser, "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
-            return browser.execute_script("""return $(arguments[0]).get();""", selector)
+            return browser.execute_script("""return ($ || jQuery)(arguments[0]).get();""", selector)
         else:
             raise
 
@@ -60,11 +60,11 @@ def find_parents_by_jquery(browser, selector):
     
     In addition to reliably including jQuery, this also finds the pa"""
     try:
-        return browser.execute_script("""return $(arguments[0]).parent().get();""", selector)
+        return browser.execute_script("""return ($ || jQuery)(arguments[0]).parent().get();""", selector)
     except WebDriverException as e:
         if e.msg.startswith(u'$ is not defined'):
             load_script(browser, "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
-            return browser.execute_script("""return $(arguments[0]).parent().get();""", selector)
+            return browser.execute_script("""return ($ || jQuery)(arguments[0]).parent().get();""", selector)
         else:
             raise
 
