@@ -48,6 +48,13 @@ def find_elements_by_jquery(browser, selector):
             raise
 
 
+def find_element_by_jquery(step, browser, selector):
+    """Find a single HTML element using jQuery-style selectors."""
+    elements = find_elements_by_jquery(browser, selector)
+    assert_true(step, len(elements) > 0)
+    return elements[0]
+
+
 def find_parents_by_jquery(browser, selector):
     """Find HTML elements' parents using jQuery-style selectors.
     
@@ -82,20 +89,20 @@ def count_elements_exactly_by_selector(step, number, selector):
 
 @step(r'I fill in \$\("(.*?)"\) with "(.*?)"$')
 def fill_in_by_selector(step, selector, value):
-    elem = find_elements_by_jquery(world.browser, selector)[0]
+    elem = find_element_by_jquery(step, world.browser, selector)
     elem.clear()
     elem.send_keys(value)
 
 
 @step(r'I submit \$\("(.*?)"\)')
 def submit_by_selector(step, selector):
-    elem = find_elements_by_jquery(world.browser, selector)[0]
+    elem = find_element_by_jquery(step, world.browser, selector)
     elem.submit()
 
 
 @step(r'I check \$\("(.*?)"\)$')
 def check_by_selector(step, selector):
-    elem = find_elements_by_jquery(world.browser, selector)[0]
+    elem = find_element_by_jquery(step, world.browser, selector)
     if not elem.is_selected():
         elem.click()
 
@@ -103,13 +110,13 @@ def check_by_selector(step, selector):
 @step(r'I click \$\("(.*?)"\)$')
 def click_by_selector(step, selector):
     # No need for separate button press step with selector style.
-    elem = find_elements_by_jquery(world.browser, selector)[0]
+    elem = find_element_by_jquery(step, world.browser, selector)
     elem.click()
 
 
 @step(r'I follow the link \$\("(.*?)"\)$')
 def click_by_selector(step, selector):
-    elem = find_elements_by_jquery(world.browser, selector)[0]
+    elem = find_element_by_jquery(step, world.browser, selector)
     href = elem.get_attribute('href')
     world.browser.get(href)
 
@@ -117,14 +124,16 @@ def click_by_selector(step, selector):
 @step(r'\$\("(.*?)"\) should be selected$')
 def click_by_selector(step, selector):
     # No need for separate button press step with selector style.
-    elem = find_elements_by_jquery(world.browser, selector)[0]
+    elem = find_element_by_jquery(step, world.browser, selector)
     assert_true(step, elem.is_selected())
 
 
 @step(r'I select \$\("(.*?)"\)$')
 def select_by_selector(step, selector):
-    option = find_elements_by_jquery(world.browser, selector)[0]
-    selector = find_parents_by_jquery(world.browser, selector)[0]
+    option = find_element_by_jquery(step, world.browser, selector)
+    selectors = find_parents_by_jquery(world.browser, selector)
+    assert_true(step, len(selectors) > 0)
+    selector = selectors[0]
     selector.click()
     time.sleep(0.3)
     option.click()
