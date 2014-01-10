@@ -139,6 +139,11 @@ def select_by_selector(step, selector):
     option.click()
     assert_true(step, option.is_selected())
 
+@step(r'There should not be an element matching \$\("(.*?)"\)$')
+def check_element_by_selector(step, selector):
+    elems = find_elements_by_jquery(world.browser, selector)
+    assert_false(step, elems)
+
 __all__ = [
     'wait_for_element_by_selector',
     'fill_in_by_selector',
