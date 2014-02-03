@@ -2,6 +2,15 @@
 Django-specific extensions
 """
 
+import socket
+import urlparse
+
+from lettuce import step
+from lettuce.django import server
+
+# make sure the steps are loaded
+import lettuce_webdriver.webdriver  # pylint:disable=unused-import
+
 
 def site_url(url):
     """
@@ -16,9 +25,9 @@ def site_url(url):
 
 
 @step(r'I visit site page "([^"]*)"')
-def visit_page(step, page):
+def visit_page(self, page):
     """
     Visit the specific page of the site.
     """
 
-    step.given('I visit "%s"' % site_url(page))
+    self.given('I visit "%s"' % site_url(page))
