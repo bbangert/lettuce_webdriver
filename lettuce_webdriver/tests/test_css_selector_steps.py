@@ -39,7 +39,7 @@ class TestUtil(unittest.TestCase):
         import lettuce_webdriver.css_selector_steps
         for feature_string in FEATURES:
             f = Feature.from_string(feature_string)
-            feature_result = f.run()
+            feature_result = f.run(failfast=True)
             scenario_result = feature_result.scenario_results[0]
             self.assertFalse(scenario_result.steps_failed)
             self.assertFalse(scenario_result.steps_skipped)
