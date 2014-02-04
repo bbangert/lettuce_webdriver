@@ -24,6 +24,8 @@ def wait_for_elem(browser, sel, timeout=15):
 
 def load_script(browser, url):
     """Ensure that JavaScript at a given URL is available to the browser."""
+    if browser.current_url.startswith('file:'):
+        url = 'https:' + url
     browser.execute_script("""
     var script_tag = document.createElement("script");
     script_tag.setAttribute("type", "text/javascript");
