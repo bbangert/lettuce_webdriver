@@ -519,3 +519,14 @@ def page_title(step, title):
 
     with AssertContextManager(step):
         assert_equals(world.browser.title, title)
+
+
+@step(r'I switch to the frame with id "([^"]*)"')
+def switch_to_frame(self, frame):
+    elem = world.browser.find_element_by_id(frame)
+    world.browser.switch_to_frame(elem)
+
+
+@step(r'I switch back to the main view')
+def switch_to_main(self):
+    world.browser.switch_to_default_content()
