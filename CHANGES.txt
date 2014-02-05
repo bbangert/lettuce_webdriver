@@ -1,3 +1,13 @@
+0.3.4
+-----
+
+- Depend on an installable version of sure
+- Bugfixes to lettuce_webdriver django steps (danni)
+- Steps for frame selection (danni)
+- Newer selenium dependency
+- Better jQuery automagic
+
+
 0.3.3
 -----
 
