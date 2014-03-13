@@ -6,11 +6,12 @@ from lettuce import (
 )
 import os.path
 
-def set_save_directory(root):
+def set_save_directory(base, source):
     """Sets the root save directory for saving screenshots.
     
     Screenshots will be saved in subdirectories under this directory by
     browser window size. """
+    root = os.path.join(base, source)
     if not os.path.isdir(root):
         os.makedirs(root)
 
