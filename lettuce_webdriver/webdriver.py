@@ -272,7 +272,20 @@ def input_has_value(step, field_name, value):
     with AssertContextManager(step):
         text_field = find_field(world.browser, 'text', field_name) or \
             find_field(world.browser, 'textarea', field_name) or \
-            find_field(world.browser, 'password', field_name)
+            find_field(world.browser, 'password', field_name) or \
+            find_field(world.browser, 'datetime', field_name) or \
+            find_field(world.browser, 'datetime-local', field_name) or \
+            find_field(world.browser, 'date', field_name) or \
+            find_field(world.browser, 'month', field_name) or \
+            find_field(world.browser, 'time', field_name) or \
+            find_field(world.browser, 'week', field_name) or \
+            find_field(world.browser, 'number', field_name) or \
+            find_field(world.browser, 'range', field_name) or \
+            find_field(world.browser, 'email', field_name) or \
+            find_field(world.browser, 'url', field_name) or \
+            find_field(world.browser, 'search', field_name) or \
+            find_field(world.browser, 'tel', field_name) or \
+            find_field(world.browser, 'color', field_name)
         assert_false(step, text_field is False,
                      'Can not find a field named "%s"' % field_name)
         assert_equals(text_field.get_attribute('value'), value)
