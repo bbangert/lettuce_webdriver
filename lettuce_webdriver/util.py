@@ -118,7 +118,16 @@ def find_field_by_name(browser, field, name):
 
 def find_field_by_value(browser, field, name):
     xpath = field_xpath(field, 'value')
-    elems = browser.find_elements_by_xpath(str(xpath % name))
+    elems = [elem for elem in browser.find_elements_by_xpath(str(xpath % name))
+             if elem.is_displayed() and elem.is_enabled()]
+
+    # sort by shortest first (most closely matching)
+    if field == 'button':
+        elems = sorted(elems, key=lambda elem: len(elem.text))
+    else:
+        elems = sorted(elems,
+                       key=lambda elem: len(elem.get_attribute('value')))
+
     return elems[0] if elems else False
 
 
