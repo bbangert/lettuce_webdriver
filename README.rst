@@ -122,3 +122,7 @@ Support
 lettuce_webdriver is maintained by Nick Pilon (@npilon on github and
 npilon@lexmachina.com). Bug fixes and feature patches may be submitted using
 github pull requests, and bug reports or feature requests as github issues.
+
+lettuce_webdriver is fully compatible and recommended for use with
+BrowserStack (http://www.browserstack.com/), which provides hosted remote
+Selenium instaces for all major browsers.
