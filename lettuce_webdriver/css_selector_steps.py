@@ -36,7 +36,7 @@ def load_script(browser, url):
 
 def find_elements_by_jquery(browser, selector):
     """Find HTML elements using jQuery-style selectors.
-    
+
     Ensures that jQuery is available to the browser; if it gets a
     WebDriverException that looks like jQuery is not available, it attempts to
     include it and reexecute the script."""
@@ -59,7 +59,7 @@ def find_element_by_jquery(step, browser, selector):
 
 def find_parents_by_jquery(browser, selector):
     """Find HTML elements' parents using jQuery-style selectors.
-    
+
     In addition to reliably including jQuery, this also finds the pa"""
     try:
         return browser.execute_script("""return ($ || jQuery)(arguments[0]).parent().get();""", selector)

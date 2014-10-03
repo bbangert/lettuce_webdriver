@@ -23,11 +23,11 @@ class TestUtil(unittest.TestCase):
     def test_find_by_label(self):
         from lettuce_webdriver.util import find_field_by_label
         assert find_field_by_label(world.browser, 'text', 'Username:')
-    
+
     def test_no_label(self):
         from lettuce_webdriver.util import find_field_by_label
         assert find_field_by_label(world.browser, 'text', 'NoSuchLabel') is False
-    
+
     def test_find_field(self):
         from lettuce_webdriver.util import find_field
         assert find_field(world.browser, 'text', 'username')
@@ -40,9 +40,9 @@ class TestUtil(unittest.TestCase):
         assert find_button(world.browser, 'Submit!')
         assert find_button(world.browser, 'submit_tentative')
         assert find_button(world.browser, 'Submit as tentative')
-    
+
     def test_wait_for_content(self):
         from lettuce_webdriver.webdriver import wait_for_content
         step = Step("foobar", [])
         self.assertRaises(AssertionError, wait_for_content, step, world.browser, 'text not on the page', timeout=0)
-    
+
