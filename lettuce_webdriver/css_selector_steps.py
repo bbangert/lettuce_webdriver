@@ -1,25 +1,18 @@
-import time
-
 from lettuce import step
 from lettuce import world
 
-from lettuce_webdriver.util import assert_true
-from lettuce_webdriver.util import assert_false
+from lettuce_webdriver.util import (assert_true,
+                                    assert_false,
+                                    wait_for)
 
 from selenium.common.exceptions import WebDriverException
 
 import logging
 log = logging.getLogger(__name__)
 
-def wait_for_elem(browser, sel, timeout=15):
-    start = time.time()
-    elems = []
-    while time.time() - start < timeout:
-        elems = find_elements_by_jquery(browser, sel)
-        if elems:
-            return elems
-        time.sleep(0.2)
-    return elems
+@wait_for
+def wait_for_elem(browser, sel):
+    return find_elements_by_jquery(browser, sel)
 
 
 def load_script(browser, url):
@@ -79,7 +72,7 @@ def check_element_by_selector(step, selector):
 
 @step(r'There should be an element matching \$\("(.*?)"\) within (\d+) seconds?$')
 def wait_for_element_by_selector(step, selector, seconds):
-    elems = wait_for_elem(world.browser, selector, int(seconds))
+    elems = wait_for_elem(world.browser, selector, timeout=int(seconds))
     assert_true(step, elems)
 
 

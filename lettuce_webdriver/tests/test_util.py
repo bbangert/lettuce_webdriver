@@ -41,8 +41,15 @@ class TestUtil(unittest.TestCase):
         assert find_button(world.browser, 'submit_tentative')
         assert find_button(world.browser, 'Submit as tentative')
 
-    def test_wait_for_content(self):
-        from lettuce_webdriver.webdriver import wait_for_content
-        step = Step("foobar", [])
-        self.assertRaises(AssertionError, wait_for_content, step, world.browser, 'text not on the page', timeout=0)
+    def test_wait_for(self):
+        from lettuce_webdriver.util import wait_for
 
+        counter = [0]
+
+        @wait_for
+        def lazy_function(i):
+            counter[0] += 1
+            return counter[0] > i
+
+        assert not lazy_function(10, timeout=1)
+        assert lazy_function(5, timeout=1)
