@@ -1,3 +1,5 @@
+import time
+
 from lettuce import step
 from lettuce import world
 
@@ -25,6 +27,8 @@ def load_script(browser, url):
     script_tag.setAttribute("src", arguments[0]);
     document.getElementsByTagName("head")[0].appendChild(script_tag);
     """, url)
+
+    time.sleep(1)
 
 
 def find_elements_by_jquery(browser, selector):
