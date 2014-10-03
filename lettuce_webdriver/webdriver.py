@@ -113,13 +113,19 @@ def element_not_contains(step, element_id, value):
     assert_false(step, elem)
 
 
+@wait_for
+def wait_for_visible_elem(browser, xpath):
+    elem = browser.find_elements_by_xpath(str(xpath))
+    if not elem:
+        return False
+    return elem[0].is_displayed()
+
+
 @step(r'I should see an element with id of "(.*?)" within (\d+) seconds?$')
 def should_see_id_in_seconds(step, element_id, timeout):
-    elem = wait_for_elem(world.browser, 'id("%s")' % element_id,
-                         timeout=int(timeout))
+    elem = wait_for_visible_elem(world.browser, 'id("%s")' % element_id,
+                                 timeout=int(timeout))
     assert_true(step, elem)
-    elem = elem[0]
-    assert_true(step, elem.is_displayed())
 
 
 @step('I should see an element with id of "(.*?)"$')
