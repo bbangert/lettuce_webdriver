@@ -3,23 +3,18 @@ import time
 from lettuce import step
 from lettuce import world
 
-from lettuce_webdriver.util import assert_true
-from lettuce_webdriver.util import assert_false
+from lettuce_webdriver.util import (assert_true,
+                                    assert_false,
+                                    wait_for)
 
 from selenium.common.exceptions import WebDriverException
 
 import logging
 log = logging.getLogger(__name__)
 
-def wait_for_elem(browser, sel, timeout=15):
-    start = time.time()
-    elems = []
-    while time.time() - start < timeout:
-        elems = find_elements_by_jquery(browser, sel)
-        if elems:
-            return elems
-        time.sleep(0.2)
-    return elems
+@wait_for
+def wait_for_elem(browser, sel):
+    return find_elements_by_jquery(browser, sel)
 
 
 def load_script(browser, url):
@@ -33,10 +28,12 @@ def load_script(browser, url):
     document.getElementsByTagName("head")[0].appendChild(script_tag);
     """, url)
 
+    time.sleep(1)
+
 
 def find_elements_by_jquery(browser, selector):
     """Find HTML elements using jQuery-style selectors.
-    
+
     Ensures that jQuery is available to the browser; if it gets a
     WebDriverException that looks like jQuery is not available, it attempts to
     include it and reexecute the script."""
@@ -59,7 +56,7 @@ def find_element_by_jquery(step, browser, selector):
 
 def find_parents_by_jquery(browser, selector):
     """Find HTML elements' parents using jQuery-style selectors.
-    
+
     In addition to reliably including jQuery, this also finds the pa"""
     try:
         return browser.execute_script("""return ($ || jQuery)(arguments[0]).parent().get();""", selector)
@@ -79,7 +76,7 @@ def check_element_by_selector(step, selector):
 
 @step(r'There should be an element matching \$\("(.*?)"\) within (\d+) seconds?$')
 def wait_for_element_by_selector(step, selector, seconds):
-    elems = wait_for_elem(world.browser, selector, int(seconds))
+    elems = wait_for_elem(world.browser, selector, timeout=int(seconds))
     assert_true(step, elems)
 
 

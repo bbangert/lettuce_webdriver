@@ -1,5 +1,4 @@
 """Webdriver support for lettuce"""
-import time
 
 from lettuce import step, world
 
@@ -9,7 +8,8 @@ from lettuce_webdriver.util import (assert_true,
                                     find_button,
                                     find_field,
                                     find_option,
-                                    option_in_select)
+                                    option_in_select,
+                                    wait_for)
 
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.alert import Alert
@@ -45,24 +45,14 @@ def contains_content(browser, content):
     return False
 
 
-def wait_for_elem(browser, xpath, timeout=15):
-    start = time.time()
-    elems = []
-    while time.time() - start < timeout:
-        elems = browser.find_elements_by_xpath(str(xpath))
-        if elems:
-            return elems
-        time.sleep(0.2)
-    return elems
+@wait_for
+def wait_for_elem(browser, xpath):
+    return browser.find_elements_by_xpath(str(xpath))
 
 
-def wait_for_content(step, browser, content, timeout=15):
-    start = time.time()
-    while time.time() - start < timeout:
-        if contains_content(world.browser, content):
-            return
-        time.sleep(0.2)
-    assert_true(step, contains_content(world.browser, content))
+@wait_for
+def wait_for_content(browser, content):
+    return contains_content(browser, content)
 
 
 ## URLS
@@ -123,13 +113,19 @@ def element_not_contains(step, element_id, value):
     assert_false(step, elem)
 
 
+@wait_for
+def wait_for_visible_elem(browser, xpath):
+    elem = browser.find_elements_by_xpath(str(xpath))
+    if not elem:
+        return False
+    return elem[0].is_displayed()
+
+
 @step(r'I should see an element with id of "(.*?)" within (\d+) seconds?$')
 def should_see_id_in_seconds(step, element_id, timeout):
-    elem = wait_for_elem(world.browser, 'id("%s")' % element_id,
-                         int(timeout))
+    elem = wait_for_visible_elem(world.browser, 'id("%s")' % element_id,
+                                 timeout=int(timeout))
     assert_true(step, elem)
-    elem = elem[0]
-    assert_true(step, elem.is_displayed())
 
 
 @step('I should see an element with id of "(.*?)"$')
@@ -150,7 +146,8 @@ def should_not_see_id(step, element_id):
 
 @step(r'I should see "([^"]+)" within (\d+) seconds?$')
 def should_see_in_seconds(step, text, timeout):
-    wait_for_content(step, world.browser, text, int(timeout))
+    assert_true(step,
+                wait_for_content(world.browser, text, timeout=int(timeout)))
 
 
 @step('I should see "([^"]+)"$')
