@@ -1,9 +1,7 @@
 """Utility functions that combine steps to locate elements"""
 
 import operator
-import socket
 import time
-import urlparse
 
 from itertools import chain
 
@@ -47,18 +45,36 @@ def assert_false(step, exp, msg=None):
 class Selector(object):
     """
     A set of elements on a page.
+
+    Delays evaluation to batch the queries together, allowing operations on
+    selectors (e.g. union) to be performed first, and then issuing as few
+    requests to the browser as possible.
+
+    Also behaves as a single element by proxying all method calls, asserting
+    that there is only one element selected.
     """
 
     def __init__(self, browser):
         self.browser = browser
 
     def _select(self):
+        """
+        Fetch the elements from the browser.
+
+        Override in subclasses.
+        """
         raise NotImplementedError("Please override select().")
 
     def _elements(self):
+        """
+        The cached list of elements.
+        """
         if not hasattr(self, '_elements_cached'):
             setattr(self, '_elements_cached', list(self._select()))
         return self._elements_cached
+
+    # The class behaves as a container for the elements, fetching the list from
+    # the browser on the first attempt to enumerate itself.
 
     def __len__(self):
         return len(self._elements())
@@ -74,6 +90,12 @@ class Selector(object):
         return bool(self._elements())
 
     def __add__(self, other):
+        """
+        Return a union of the two selectors.
+
+        Where possible, avoid evaluating either selector to batch queries.
+        """
+
         if isinstance(other, RealisedSelector):
             # no better than a list
             other = list(other)
@@ -82,7 +104,10 @@ class Selector(object):
             return MultiSelector(self.browser, self, other)
         else:
             if not other:
+                # Nothing to add
                 return self
+
+            # This will perform a query if other is a selector.
             try:
                 other = list(other)
             except TypeError:
@@ -97,10 +122,10 @@ class Selector(object):
         """
 
         if attr == '_elements_cached':
+            # Never going to be on the element
             raise AttributeError()
-        if len(self) != 1:
-            import pdb; pdb.set_trace()
-        assert len(self) == 1
+
+        assert len(self) == 1, 'Must be a single element.'
         return getattr(self[0], attr)
 
 
@@ -142,6 +167,9 @@ class MultiSelector(Selector):
 class XPathSelector(Selector):
     """
     An XPath selector.
+
+    Several of these can be joined together so that only a single query is made
+    to the browser.
     """
 
     def __init__(self, browser, xpath):
@@ -152,6 +180,10 @@ class XPathSelector(Selector):
         return self.browser.find_elements_by_xpath(self.xpath)
 
     def __add__(self, other):
+        """
+        If possible, return a single selector, avoiding evaluation.
+        """
+
         if isinstance(other, XPathSelector):
             return XPathSelector(self.browser,
                                  self.xpath + '|' + other.xpath)
@@ -159,7 +191,10 @@ class XPathSelector(Selector):
             return super(XPathSelector, self).__add__(other)
 
 
-def union(values):
+def sum1(values):
+    """
+    Add up all the values without specifying the initial element.
+    """
     return reduce(operator.add, values)
 
 
@@ -246,7 +281,7 @@ def find_field_by_name(browser, field, name):
 
 def find_field_by_value(browser, field, name):
     xpath = field_xpath(field, 'value')
-    elems = [elem for elem in browser.find_elements_by_xpath(str(xpath % name))
+    elems = [elem for elem in XPathSelector(browser, str(xpath % name))
              if elem.is_displayed() and elem.is_enabled()]
 
     # sort by shortest first (most closely matching)
