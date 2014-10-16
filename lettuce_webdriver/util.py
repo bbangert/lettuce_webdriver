@@ -1,8 +1,11 @@
 """Utility functions that combine steps to locate elements"""
 
+import operator
 import socket
 import time
 import urlparse
+
+from itertools import chain
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -31,9 +34,9 @@ class AssertContextManager():
             raise error, None, traceback
 
 
-def assert_true(step, exp):
+def assert_true(step, exp, msg=None):
     with AssertContextManager(step):
-        nose_assert_true(exp)
+        nose_assert_true(exp, msg)
 
 
 def assert_false(step, exp, msg=None):
@@ -41,13 +44,132 @@ def assert_false(step, exp, msg=None):
         nose_assert_false(exp, msg)
 
 
+class Selector(object):
+    """
+    A set of elements on a page.
+    """
+
+    def __init__(self, browser):
+        self.browser = browser
+
+    def _select(self):
+        raise NotImplementedError("Please override select().")
+
+    def _elements(self):
+        if not hasattr(self, '_elements_cached'):
+            setattr(self, '_elements_cached', list(self._select()))
+        return self._elements_cached
+
+    def __len__(self):
+        return len(self._elements())
+
+    def __getitem__(self, key):
+        return self._elements()[key]
+
+    def __iter__(self):
+        for el in self._elements():
+            yield el
+
+    def __nonzero__(self):
+        return bool(self._elements())
+
+    def __add__(self, other):
+        if isinstance(other, RealisedSelector):
+            # no better than a list
+            other = list(other)
+
+        if isinstance(other, Selector):
+            return MultiSelector(self.browser, self, other)
+        else:
+            if not other:
+                return self
+            try:
+                other = list(other)
+            except TypeError:
+                other = [other]
+
+            return RealisedSelector(self.browser,
+                                    list(self) + other)
+
+    def __getattr__(self, attr):
+        """
+        Delegate all calls to the only element selected.
+        """
+
+        if attr == '_elements_cached':
+            raise AttributeError()
+        if len(self) != 1:
+            import pdb; pdb.set_trace()
+        assert len(self) == 1
+        return getattr(self[0], attr)
+
+
+class RealisedSelector(Selector):
+    """
+    A selector specifying elements directly.
+    """
+
+    def __init__(self, browser, elements):
+        super(RealisedSelector, self).__init__(browser)
+        self.elements = elements
+
+    def _select(self):
+        return self.elements
+
+
+class MultiSelector(Selector):
+    """
+    A selector adding up many selectors.
+    """
+
+    def __init__(self, browser, *selectors):
+        super(MultiSelector, self).__init__(browser)
+        self.selectors = selectors
+
+    def _select(self):
+        return chain.from_iterable(sel._select()
+                                   for sel in self.selectors)
+
+    def __add__(self, other):
+        selectors = self.selectors
+        if isinstance(other, MultiSelector):
+            selectors += other.selectors
+        else:
+            selectors += (other,)
+        return MultiSelector(self.browser, *selectors)
+
+
+class XPathSelector(Selector):
+    """
+    An XPath selector.
+    """
+
+    def __init__(self, browser, xpath):
+        super(XPathSelector, self).__init__(browser)
+        self.xpath = xpath
+
+    def _select(self):
+        return self.browser.find_elements_by_xpath(self.xpath)
+
+    def __add__(self, other):
+        if isinstance(other, XPathSelector):
+            return XPathSelector(self.browser,
+                                 self.xpath + '|' + other.xpath)
+        else:
+            return super(XPathSelector, self).__add__(other)
+
+
+def union(values):
+    return reduce(operator.add, values)
+
+
 def element_id_by_label(browser, label):
     """Return the id of a label's for attribute"""
-    for_id = browser.find_elements_by_xpath(str('//label[contains(., "%s")]' %
-                                                label))
-    if not for_id:
+    label = XPathSelector(browser,
+                          str('//label[contains(., "%s")]' % label))
+    if not label:
         return False
-    return for_id[0].get_attribute('for')
+    return label.get_attribute('for')
 
 
 ## Field helper functions to locate select, textarea, and the other
@@ -67,15 +189,15 @@ def field_xpath(field, attribute):
 
 
 def find_button(browser, value):
-    return find_field_with_value(browser, 'submit', value) or \
-        find_field_with_value(browser, 'reset', value) or \
-        find_field_with_value(browser, 'button', value) or \
+    return find_field_with_value(browser, 'submit', value) + \
+        find_field_with_value(browser, 'reset', value) + \
+        find_field_with_value(browser, 'button', value) + \
         find_field_with_value(browser, 'image', value)
 
 
 def find_field_with_value(browser, field, value):
-    return find_field_by_id(browser, field, value) or \
-        find_field_by_name(browser, field, value) or \
+    return find_field_by_id(browser, field, value) + \
+        find_field_by_name(browser, field, value) + \
         find_field_by_value(browser, field, value)
 
 
@@ -100,8 +222,8 @@ def find_field(browser, field, value):
     the name of the element, then a label for the element.
 
     """
-    return find_field_by_id(browser, field, value) or \
-        find_field_by_name(browser, field, value) or \
+    return find_field_by_id(browser, field, value) + \
+        find_field_by_name(browser, field, value) + \
         find_field_by_label(browser, field, value)
 
 
@@ -110,24 +232,16 @@ def find_any_field(browser, field_types, field_name):
     Find a field of any of the specified types.
     """
 
-    for field_type in field_types:
-        field = find_field(browser, field_type, field_name)
-        if field:
-            return field
-    else:
-        return False
+    return sum1(find_field(browser, field_type, field_name)
+                 for field_type in field_types)
 
 
 def find_field_by_id(browser, field, id):
-    xpath = field_xpath(field, 'id')
-    elems = browser.find_elements_by_xpath(str(xpath % id))
-    return elems[0] if elems else False
+    return XPathSelector(browser, field_xpath(field, 'id') % id)
 
 
 def find_field_by_name(browser, field, name):
-    xpath = field_xpath(field, 'name')
-    elems = browser.find_elements_by_xpath(str(xpath % name))
-    return elems[0] if elems else False
+    return XPathSelector(browser, field_xpath(field, 'name') % name)
 
 
 def find_field_by_value(browser, field, name):
@@ -142,7 +256,7 @@ def find_field_by_value(browser, field, name):
         elems = sorted(elems,
                        key=lambda elem: len(elem.get_attribute('value')))
 
-    return elems[0] if elems else False
+    return elems
 
 
 def find_field_by_label(browser, field, label):

@@ -220,21 +220,24 @@ TEXT_FIELDS = (
 
 @step('I fill in "(.*?)" with "(.*?)"$')
 def fill_in_textfield(step, field_name, value):
-
     with AssertContextManager(step):
-        date_field = find_any_field(browser, DATE_FIELDS, field_name)
+        date_field = find_any_field(world.browser,
+                                    DATE_FIELDS,
+                                    field_name)
         if date_field:
-            text_field = date_field
+            field = date_field
         else:
-            text_field = find_any_field(browser, TEXT_FIELDS, field_name)
+            field = find_any_field(world.browser,
+                                   TEXT_FIELDS,
+                                   field_name)
 
-        assert_false(step, text_field is False,
-                     'Can not find a field named "%s"' % field_name)
+        assert_true(step, field,
+                    'Can not find a field named "%s"' % field_name)
         if date_field:
-            text_field.send_keys(Keys.DELETE)
+            field.send_keys(Keys.DELETE)
         else:
-            text_field.clear()
-        text_field.send_keys(value)
+            field.clear()
+        field.send_keys(value)
 
 
 @step('I press "(.*?)"$')
