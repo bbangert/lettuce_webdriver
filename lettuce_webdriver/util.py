@@ -105,6 +105,19 @@ def find_field(browser, field, value):
         find_field_by_label(browser, field, value)
 
 
+def find_any_field(browser, field_types, field_name):
+    """
+    Find a field of any of the specified types.
+    """
+
+    for field_type in field_types:
+        field = find_field(browser, field_type, field_name)
+        if field:
+            return field
+    else:
+        return False
+
+
 def find_field_by_id(browser, field, id):
     xpath = field_xpath(field, 'id')
     elems = browser.find_elements_by_xpath(str(xpath % id))

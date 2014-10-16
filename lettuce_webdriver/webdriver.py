@@ -5,6 +5,7 @@ from lettuce import step, world
 from lettuce_webdriver.util import (assert_true,
                                     assert_false,
                                     AssertContextManager,
+                                    find_any_field,
                                     find_button,
                                     find_field,
                                     find_option,
@@ -13,6 +14,7 @@ from lettuce_webdriver.util import (assert_true,
 
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
@@ -193,28 +195,45 @@ def see_form(step, url):
                                                    url))
 
 
+DATE_FIELDS = (
+    'datetime',
+    'datetime-local',
+    'date',
+)
+
+
+TEXT_FIELDS = (
+    'text',
+    'textarea',
+    'password',
+    'month',
+    'time',
+    'week',
+    'number',
+    'range',
+    'email',
+    'url',
+    'tel',
+    'color',
+)
+
+
 @step('I fill in "(.*?)" with "(.*?)"$')
 def fill_in_textfield(step, field_name, value):
+
     with AssertContextManager(step):
-        text_field = find_field(world.browser, 'text', field_name) or \
-            find_field(world.browser, 'textarea', field_name) or \
-            find_field(world.browser, 'password', field_name) or \
-            find_field(world.browser, 'datetime', field_name) or \
-            find_field(world.browser, 'datetime-local', field_name) or \
-            find_field(world.browser, 'date', field_name) or \
-            find_field(world.browser, 'month', field_name) or \
-            find_field(world.browser, 'time', field_name) or \
-            find_field(world.browser, 'week', field_name) or \
-            find_field(world.browser, 'number', field_name) or \
-            find_field(world.browser, 'range', field_name) or \
-            find_field(world.browser, 'email', field_name) or \
-            find_field(world.browser, 'url', field_name) or \
-            find_field(world.browser, 'search', field_name) or \
-            find_field(world.browser, 'tel', field_name) or \
-            find_field(world.browser, 'color', field_name)
+        date_field = find_any_field(browser, DATE_FIELDS, field_name)
+        if date_field:
+            text_field = date_field
+        else:
+            text_field = find_any_field(browser, TEXT_FIELDS, field_name)
+
         assert_false(step, text_field is False,
                      'Can not find a field named "%s"' % field_name)
-        text_field.clear()
+        if date_field:
+            text_field.send_keys(Keys.DELETE)
+        else:
+            text_field.clear()
         text_field.send_keys(value)
 
 
@@ -267,22 +286,9 @@ def input_has_value(step, field_name, value):
     Check that the form input element has given value.
     """
     with AssertContextManager(step):
-        text_field = find_field(world.browser, 'text', field_name) or \
-            find_field(world.browser, 'textarea', field_name) or \
-            find_field(world.browser, 'password', field_name) or \
-            find_field(world.browser, 'datetime', field_name) or \
-            find_field(world.browser, 'datetime-local', field_name) or \
-            find_field(world.browser, 'date', field_name) or \
-            find_field(world.browser, 'month', field_name) or \
-            find_field(world.browser, 'time', field_name) or \
-            find_field(world.browser, 'week', field_name) or \
-            find_field(world.browser, 'number', field_name) or \
-            find_field(world.browser, 'range', field_name) or \
-            find_field(world.browser, 'email', field_name) or \
-            find_field(world.browser, 'url', field_name) or \
-            find_field(world.browser, 'search', field_name) or \
-            find_field(world.browser, 'tel', field_name) or \
-            find_field(world.browser, 'color', field_name)
+        text_field = find_any_field(world.browser,
+                                    DATE_FIELDS + TEXT_FIELDS,
+                                    field_name)
         assert_false(step, text_field is False,
                      'Can not find a field named "%s"' % field_name)
         assert_equals(text_field.get_attribute('value'), value)
