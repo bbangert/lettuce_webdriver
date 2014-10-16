@@ -1,6 +1,7 @@
 """Utility functions that combine steps to locate elements"""
 
 import socket
+import time
 import urlparse
 
 from selenium.common.exceptions import NoSuchElementException
@@ -161,3 +162,26 @@ def option_in_select(browser, select_name, option):
             './/option[normalize-space(text()) = "%s"]' % option))
     except NoSuchElementException:
         return None
+
+
+def wait_for(func):
+    """
+    A decorator to invoke a function periodically until it returns a truthy
+    value.
+    """
+
+    def wrapped(*args, **kwargs):
+        timeout = kwargs.pop('timeout', 15)
+
+        start = time.time()
+        result = None
+
+        while time.time() - start < timeout:
+            result = func(*args, **kwargs)
+            if result:
+                break
+            time.sleep(0.2)
+
+        return result
+
+    return wrapped
