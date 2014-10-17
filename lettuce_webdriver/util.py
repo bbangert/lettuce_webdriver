@@ -292,6 +292,8 @@ def find_field_by_value(browser, field, name):
         elems = sorted(elems,
                        key=lambda elem: len(elem.get_attribute('value')))
 
+    if elems:
+        elems = [elems[0]]
     return elems
 
 
