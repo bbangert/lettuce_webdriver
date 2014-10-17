@@ -125,7 +125,8 @@ class Selector(object):
             # Never going to be on the element
             raise AttributeError()
 
-        assert len(self) == 1, 'Must be a single element.'
+        assert len(self) == 1, \
+            'Must be a single element, have {0}'.format(len(self))
         return getattr(self[0], attr)
 
 
