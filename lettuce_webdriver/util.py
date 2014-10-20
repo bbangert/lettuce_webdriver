@@ -210,18 +210,22 @@ def element_id_by_label(browser, label):
 
 ## Field helper functions to locate select, textarea, and the other
 ## types of input fields (text, checkbox, radio)
-def field_xpath(field, attribute):
+def field_xpath(field, attribute, escape=True):
+    if escape:
+        value = '"%s"'
+    else:
+        value = '%s'
     if field in ['select', 'textarea']:
-        return './/%s[@%s="%%s"]' % (field, attribute)
+        return './/%s[@%s=%s]' % (field, attribute, value)
     elif field == 'button':
         if attribute == 'value':
-            return './/%s[contains(., "%%s")]' % (field, )
+            return './/%s[contains(., %s)]' % (field, value)
         else:
-            return './/%s[@%s="%%s"]' % (field, attribute)
+            return './/%s[@%s=%s]' % (field, attribute, value)
     elif field == 'option':
-        return './/%s[@%s="%%s"]' % (field, attribute)
+        return './/%s[@%s=%s]' % (field, attribute, value)
     else:
-        return './/input[@%s="%%s"][@type="%s"]' % (attribute, field)
+        return './/input[@%s=%s][@type="%s"]' % (attribute, value, field)
 
 
 def find_button(browser, value):
@@ -305,10 +309,10 @@ def find_field_by_label(browser, field, label):
     locate the element by its id.
 
     """
-    for_id = element_id_by_label(browser, label)
-    if not for_id:
-        return False
-    return find_field_by_id(browser, field, for_id)
+
+    return XPathSelector(browser,
+                         field_xpath(field, 'id', escape=False) %
+                         '//label[contains(text(), "{0}")]/@for'.format(label))
 
 
 def option_in_select(browser, select_name, option):
