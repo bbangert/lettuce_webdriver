@@ -26,7 +26,7 @@ class TestUtil(unittest.TestCase):
 
     def test_no_label(self):
         from lettuce_webdriver.util import find_field_by_label
-        assert find_field_by_label(world.browser, 'text', 'NoSuchLabel') is False
+        assert not find_field_by_label(world.browser, 'text', 'NoSuchLabel')
 
     def test_find_field(self):
         from lettuce_webdriver.util import find_field

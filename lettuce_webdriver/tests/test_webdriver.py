@@ -354,6 +354,18 @@ Feature: assert value
 
         return dict(page=PAGES['basic_page'])
 
+    @feature(passed=3)
+    def test_date_input(self):
+        """
+Feature: assert value
+    Scenario: basic page
+        When I go to "{page}"
+        And I fill in "dob" with "1900/01/01"
+        Then input "dob" has value "1900/01/01"
+        """
+
+        return dict(page=PAGES['basic_page'])
+
     @feature(passed=2)
     def test_page_title(self):
         """
