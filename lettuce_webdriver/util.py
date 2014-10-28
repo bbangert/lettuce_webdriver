@@ -138,13 +138,6 @@ class XPathSelector(object):
         return getattr(self[0], attr)
 
 
-def sum1(values):
-    """
-    Add up all the values without specifying the initial element.
-    """
-    return reduce(operator.add, values)
-
-
 def element_id_by_label(browser, label):
     """Return the id of a label's for attribute"""
     label = XPathSelector(browser,
@@ -218,8 +211,11 @@ def find_any_field(browser, field_types, field_name):
     Find a field of any of the specified types.
     """
 
-    return sum1(find_field(browser, field_type, field_name)
-                for field_type in field_types)
+    return reduce(
+        operator.add,
+        (find_field(browser, field_type, field_name)
+         for field_type in field_types)
+    )
 
 
 def find_field_by_id(browser, field, id):
