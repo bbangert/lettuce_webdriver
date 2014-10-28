@@ -3,8 +3,6 @@
 import operator
 import time
 
-from itertools import chain
-
 from selenium.common.exceptions import NoSuchElementException
 
 from nose.tools import assert_true as nose_assert_true
@@ -42,9 +40,9 @@ def assert_false(step, exp, msg=None):
         nose_assert_false(exp, msg)
 
 
-class Selector(object):
+class XPathSelector(object):
     """
-    A set of elements on a page.
+    A set of elements on a page matching an XPath query.
 
     Delays evaluation to batch the queries together, allowing operations on
     selectors (e.g. union) to be performed first, and then issuing as few
@@ -54,16 +52,29 @@ class Selector(object):
     that there is only one element selected.
     """
 
-    def __init__(self, browser):
+    def __init__(self, browser, xpath=None, elements=None):
+        """
+        Initialise the selector.
+
+        One of 'xpath' and 'elements' must be passed. Passing 'xpath' creates a
+        selector delaying evaluation until it's needed, passing 'elements'
+        stores the elements immediately.
+        """
         self.browser = browser
+
+        if xpath is None and elements is None:
+            raise ValueError("Must supply either xpath or elements.")
+
+        if xpath is not None:
+            self.xpath = xpath
+        else:
+            self._elements_cached = elements
 
     def _select(self):
         """
         Fetch the elements from the browser.
-
-        Override in subclasses.
         """
-        raise NotImplementedError("Please override select().")
+        return self.browser.find_elements_by_xpath(self.xpath)
 
     def _elements(self):
         """
@@ -72,6 +83,30 @@ class Selector(object):
         if not hasattr(self, '_elements_cached'):
             setattr(self, '_elements_cached', list(self._select()))
         return self._elements_cached
+
+    def __add__(self, other):
+        """
+        Return a union of the two selectors.
+
+        Where possible, avoid evaluating either selector to batch queries.
+        """
+
+        if not hasattr(self, '_elements_cached') \
+                and isinstance(other, XPathSelector) \
+                and not hasattr(other, '_elements_cached'):
+            # Both summands are delayed, return a new delayed selector
+            return XPathSelector(self.browser,
+                                 xpath=self.xpath + '|' + other.xpath)
+        else:
+            # Have to evaluate everything now
+            # other can be either an already evaluated XPathSelector, a list or
+            # a single element
+            try:
+                other = list(other)
+            except TypeError:
+                other = [other]
+
+            return XPathSelector(self.browser, elements=list(self) + other)
 
     # The class behaves as a container for the elements, fetching the list from
     # the browser on the first attempt to enumerate itself.
@@ -89,33 +124,6 @@ class Selector(object):
     def __nonzero__(self):
         return bool(self._elements())
 
-    def __add__(self, other):
-        """
-        Return a union of the two selectors.
-
-        Where possible, avoid evaluating either selector to batch queries.
-        """
-
-        if isinstance(other, RealisedSelector):
-            # no better than a list
-            other = list(other)
-
-        if isinstance(other, Selector):
-            return MultiSelector(self.browser, self, other)
-        else:
-            if not other:
-                # Nothing to add
-                return self
-
-            # This will perform a query if other is a selector.
-            try:
-                other = list(other)
-            except TypeError:
-                other = [other]
-
-            return RealisedSelector(self.browser,
-                                    list(self) + other)
-
     def __getattr__(self, attr):
         """
         Delegate all calls to the only element selected.
@@ -128,68 +136,6 @@ class Selector(object):
         assert len(self) == 1, \
             'Must be a single element, have {0}'.format(len(self))
         return getattr(self[0], attr)
-
-
-class RealisedSelector(Selector):
-    """
-    A selector specifying elements directly.
-    """
-
-    def __init__(self, browser, elements):
-        super(RealisedSelector, self).__init__(browser)
-        self.elements = elements
-
-    def _select(self):
-        return self.elements
-
-
-class MultiSelector(Selector):
-    """
-    A selector adding up many selectors.
-    """
-
-    def __init__(self, browser, *selectors):
-        super(MultiSelector, self).__init__(browser)
-        self.selectors = selectors
-
-    def _select(self):
-        return chain.from_iterable(sel._select()
-                                   for sel in self.selectors)
-
-    def __add__(self, other):
-        selectors = self.selectors
-        if isinstance(other, MultiSelector):
-            selectors += other.selectors
-        else:
-            selectors += (other,)
-        return MultiSelector(self.browser, *selectors)
-
-
-class XPathSelector(Selector):
-    """
-    An XPath selector.
-
-    Several of these can be joined together so that only a single query is made
-    to the browser.
-    """
-
-    def __init__(self, browser, xpath):
-        super(XPathSelector, self).__init__(browser)
-        self.xpath = xpath
-
-    def _select(self):
-        return self.browser.find_elements_by_xpath(self.xpath)
-
-    def __add__(self, other):
-        """
-        If possible, return a single selector, avoiding evaluation.
-        """
-
-        if isinstance(other, XPathSelector):
-            return XPathSelector(self.browser,
-                                 self.xpath + '|' + other.xpath)
-        else:
-            return super(XPathSelector, self).__add__(other)
 
 
 def sum1(values):
