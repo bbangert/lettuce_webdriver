@@ -154,8 +154,8 @@ def element_id_by_label(browser, label):
     return label.get_attribute('for')
 
 
-## Field helper functions to locate select, textarea, and the other
-## types of input fields (text, checkbox, radio)
+# Field helper functions to locate select, textarea, and the other
+# types of input fields (text, checkbox, radio)
 def field_xpath(field, attribute, escape=True):
     if escape:
         value = '"%s"'
@@ -219,7 +219,7 @@ def find_any_field(browser, field_types, field_name):
     """
 
     return sum1(find_field(browser, field_type, field_name)
-                 for field_type in field_types)
+                for field_type in field_types)
 
 
 def find_field_by_id(browser, field, id):
