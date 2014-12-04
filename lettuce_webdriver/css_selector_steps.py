@@ -1,4 +1,4 @@
-import time
+from time import sleep
 
 from lettuce import step
 from lettuce import world
@@ -28,7 +28,7 @@ def load_script(browser, url):
     document.getElementsByTagName("head")[0].appendChild(script_tag);
     """, url)
 
-    time.sleep(1)
+    sleep(1)
 
 
 def find_elements_by_jquery(browser, selector):
@@ -134,7 +134,7 @@ def select_by_selector(step, selector):
     assert_true(step, len(selectors) > 0)
     selector = selectors[0]
     selector.click()
-    time.sleep(0.3)
+    sleep(0.3)
     option.click()
     assert_true(step, option.is_selected())
 
