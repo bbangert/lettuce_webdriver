@@ -1,7 +1,7 @@
 """Utility functions that combine steps to locate elements"""
 
 import operator
-import time
+from time import time, sleep
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -284,14 +284,14 @@ def wait_for(func):
     def wrapped(*args, **kwargs):
         timeout = kwargs.pop('timeout', 15)
 
-        start = time.time()
+        start = time()
         result = None
 
-        while time.time() - start < timeout:
+        while time() - start < timeout:
             result = func(*args, **kwargs)
             if result:
                 break
-            time.sleep(0.2)
+            sleep(0.2)
 
         return result
 
