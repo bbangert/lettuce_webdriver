@@ -95,7 +95,7 @@ def should_see_link_text(step, link_text, link_url):
       'and the url "(.*?)"$')
 def should_include_link_text(step, link_text, link_url):
     return world.browser.find_element_by_xpath(str(
-        '//a[@href="%s"][contains(., %s)]' %
+        '//a[@href="%s"][contains(., "%s")]' %
         (link_url, link_text)))
 
 
