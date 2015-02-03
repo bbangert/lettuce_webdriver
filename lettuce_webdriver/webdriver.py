@@ -528,6 +528,9 @@ def press_by_tooltip(step, tooltip):
                 break
             except Exception:
                 pass
+        else:
+            raise AssertionError("No button with tooltip '{0}' found"
+                                 .format(tooltip))
 
 
 @step(r'The page title should be "([^"]*)"')
