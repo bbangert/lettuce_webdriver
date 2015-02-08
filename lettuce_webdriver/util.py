@@ -254,7 +254,7 @@ def find_field_by_label(browser, field, label):
 
     return XPathSelector(browser,
                          field_xpath(field, 'id', escape=False) %
-                         '//label[contains(text(), "{0}")]/@for'.format(label))
+                         '//label[contains(., "{0}")]/@for'.format(label))
 
 
 def option_in_select(browser, select_name, option):
