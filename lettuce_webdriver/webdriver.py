@@ -103,14 +103,14 @@ def should_include_link_text(step, link_text, link_url):
 @step('The element with id of "(.*?)" contains "(.*?)"$')
 def element_contains(step, element_id, value):
     return world.browser.find_element_by_xpath(str(
-        'id("{id}")[contains(text(), "{value}")]'.format(
+        'id("{id}")[contains(., "{value}")]'.format(
             id=element_id, value=value)))
 
 
 @step('The element with id of "(.*?)" does not contain "(.*?)"$')
 def element_not_contains(step, element_id, value):
     elem = world.browser.find_elements_by_xpath(str(
-        'id("{id}")[contains(text(), "{value}")]'.format(
+        'id("{id}")[contains(., "{value}")]'.format(
             id=element_id, value=value)))
     assert_false(step, elem)
 
