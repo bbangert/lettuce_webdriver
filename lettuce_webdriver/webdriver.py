@@ -33,9 +33,9 @@ def contains_content(browser, content):
     #  for in it or its subelements, but whose children do NOT contain that
     #  text - otherwise matches <body> or <html> or other similarly useless
     #  things.
-    for elem in browser.find_elements_by_xpath(str(
-            '//*[contains(normalize-space(.),"{content}") '
-            'and not(./*[contains(normalize-space(.),"{content}")])]'
+    for elem in browser.find_elements_by_xpath(unicode(
+            u'//*[contains(normalize-space(.),"{content}") '
+            u'and not(./*[contains(normalize-space(.),"{content}")])]'
             .format(content=content))):
 
         try:
