@@ -228,7 +228,7 @@ def find_field_by_name(browser, field, name):
 
 def find_field_by_value(browser, field, name):
     xpath = field_xpath(field, 'value')
-    elems = [elem for elem in XPathSelector(browser, str(xpath % name))
+    elems = [elem for elem in XPathSelector(browser, unicode(xpath % name))
              if elem.is_displayed() and elem.is_enabled()]
 
     # sort by shortest first (most closely matching)
@@ -254,7 +254,7 @@ def find_field_by_label(browser, field, label):
 
     return XPathSelector(browser,
                          field_xpath(field, 'id', escape=False) %
-                         '//label[contains(., "{0}")]/@for'.format(label))
+                         u'//label[contains(., "{0}")]/@for'.format(label))
 
 
 def option_in_select(browser, select_name, option):
@@ -269,7 +269,7 @@ def option_in_select(browser, select_name, option):
     assert select
 
     try:
-        return select.find_element_by_xpath(str(
+        return select.find_element_by_xpath(unicode(
             './/option[normalize-space(text()) = "%s"]' % option))
     except NoSuchElementException:
         return None
