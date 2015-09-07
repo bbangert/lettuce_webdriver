@@ -76,6 +76,7 @@ def click(step, name):
         elem = world.browser.find_element_by_link_text(name)
         elem.click()
 
+
 @step('I click by id "(.*?)"$')
 def click_by_id(step, id_name):
     with AssertContextManager(step):
