@@ -141,7 +141,7 @@ class XPathSelector(object):
 def element_id_by_label(browser, label):
     """Return the id of a label's for attribute"""
     label = XPathSelector(browser,
-                          str('//label[contains(., "%s")]' % label))
+                          unicode('//label[contains(., "%s")]' % label))
     if not label:
         return False
     return label.get_attribute('for')
@@ -189,7 +189,7 @@ def find_option(browser, select_name, option_name):
     option_box = find_field(select_box, 'option', option_name)
     if not option_box:
         # Locate by contents
-        option_box = select_box.find_element_by_xpath(str(
+        option_box = select_box.find_element_by_xpath(unicode(
             './/option[contains(., "%s")]' % option_name))
     return option_box
 
