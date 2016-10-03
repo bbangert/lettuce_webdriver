@@ -77,6 +77,13 @@ def click(step, name):
         elem.click()
 
 
+@step('I click by id "(.*?)"$')
+def click_by_id(step, id_name):
+    with AssertContextManager(step):
+        elem = world.browser.find_element_by_xpath(str('id("%s")' % id_name))
+        elem.click()
+
+
 @step('I should see a link with the url "(.*?)"$')
 def should_see_link(step, link_url):
     assert_true(step, world.browser.
